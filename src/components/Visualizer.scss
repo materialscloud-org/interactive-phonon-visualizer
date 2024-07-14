@@ -27,4 +27,29 @@
   #amplitudeControls {
     margin: 1em 0;
   }
+
+  .overlay-div {
+    display: table;
+    z-index: 10000;
+    position: absolute;
+    left: 0;
+    top: 40px;
+    height: calc(100% - 40px);
+    width: 100%;
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.1);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    user-select: none;
+    -moz-user-select: none;
+
+    span {
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      line-height: normal;
+      font-size: 24px;
+      font-weight: 700;
+      color: rgb(80, 80, 80);
+    }
+  }
 }

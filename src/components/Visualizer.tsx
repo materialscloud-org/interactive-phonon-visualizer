@@ -7,6 +7,7 @@ import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 import useParameters from "./useParameters";
 
+import CellView from "./CellView";
 import MemoizedParameterControls from "./ParameterControls";
 import MemoizedPhononBandsView from "./PhononBandsView";
 
@@ -33,7 +34,7 @@ const Visualizer = ({ props }: { props: VisualizerProps }) => {
             <MemoizedParameterControls />
           </Col>
           <Col xxl="4" className="visualizer-panel">
-            {/* cell view */}
+            <CellView props={props} mode={mode} />
           </Col>
           <Col xxl="5" className="visualizer-panel">
             <MemoizedPhononBandsView
