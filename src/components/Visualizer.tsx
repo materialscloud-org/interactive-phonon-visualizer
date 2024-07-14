@@ -4,6 +4,7 @@ import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 import useParameters from "./useParameters";
 
+import MemoizedParameterControls from "./ParameterControls";
 import "./Visualizer.css";
 
 const Visualizer = ({ props }: { props: VisualizerProps }) => {
@@ -14,7 +15,7 @@ const Visualizer = ({ props }: { props: VisualizerProps }) => {
       <Container fluid>
         <Row className="mb-xxl-4">
           <Col xxl="3" className="visualizer-panel">
-            {/* controls panel */}
+            <MemoizedParameterControls />
           </Col>
           <Col xxl="4" className="visualizer-panel">
             {/* cell view */}
