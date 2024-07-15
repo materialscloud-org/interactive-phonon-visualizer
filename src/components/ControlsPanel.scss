@@ -6,13 +6,14 @@
   }
 }
 
+.controls-group {
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 #cameraControls {
   button {
     width: 40px;
     margin-right: 0.25em;
   }
-}
-
-#amplitudeControls {
-  margin: 1em 0;
 }

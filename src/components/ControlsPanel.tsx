@@ -111,8 +111,8 @@ const ControlsPanel = () => {
     <Card>
       <Card.Header>Settings</Card.Header>
       <Card.Body>
-        <Form onSubmit={updateCellRepetitions} className="mb-3">
-          <Form.Group as={Row}>
+        <Form onSubmit={updateCellRepetitions}>
+          <Form.Group as={Row} className="controls-group">
             <Form.Label>Repetitions</Form.Label>
             <Col xs="8" id="cellRepetitions">
               <Form.Control
@@ -142,7 +142,7 @@ const ControlsPanel = () => {
           </Form.Group>
         </Form>
         <Form>
-          <Form.Group as={Row} id="cameraControls">
+          <Form.Group as={Row} id="cameraControls" className="controls-group">
             <Col xs="3">
               <Form.Label>Camera</Form.Label>
             </Col>
@@ -158,7 +158,7 @@ const ControlsPanel = () => {
               </Button>
             </Col>
           </Form.Group>
-          <Form.Group as={Row}>
+          <Form.Group as={Row} className="controls-group">
             <Col xs="3">
               <Form.Label>Cell</Form.Label>
             </Col>
@@ -172,7 +172,7 @@ const ControlsPanel = () => {
           </Form.Group>
         </Form>
         <Form id="amplitudeControls" onSubmit={handleAmplitudeTextInput}>
-          <Form.Group as={Row}>
+          <Form.Group as={Row} className="controls-group">
             <Form.Label>Amplitude</Form.Label>
             <Col xs="8">
               <Form.Range
@@ -197,7 +197,7 @@ const ControlsPanel = () => {
           </Form.Group>
         </Form>
         <Form>
-          <Form.Group as={Row}>
+          <Form.Group as={Row} className="controls-group">
             <Form.Label>Vectors</Form.Label>
             <Col xs="8">
               <Form.Range
@@ -216,7 +216,7 @@ const ControlsPanel = () => {
               />
             </Col>
           </Form.Group>
-          <Form.Group as={Row}>
+          <Form.Group as={Row} className="controls-group">
             <Form.Label>Speed</Form.Label>
             <Col xs="8">
               <Form.Range
