@@ -1,0 +1,18 @@
+#cellRepetitions {
+  display: flex;
+
+  input:not(:last-child) {
+    margin-right: 1em;
+  }
+}
+
+#cameraControls {
+  button {
+    width: 40px;
+    margin-right: 0.25em;
+  }
+}
+
+#amplitudeControls {
+  margin: 1em 0;
+}

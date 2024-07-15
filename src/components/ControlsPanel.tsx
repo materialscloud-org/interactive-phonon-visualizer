@@ -3,7 +3,9 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
 import ParametersContext from "./ParametersContext";
 
-const ParameterControls = () => {
+import "./ControlsPanel.scss";
+
+const ControlsPanel = () => {
   const {
     nx,
     setNx,
@@ -235,6 +237,6 @@ const ParameterControls = () => {
   );
 };
 
-const MemoizedParameterControls = memo(ParameterControls);
+const MemoizedControlsPanel = memo(ControlsPanel);
 
-export default MemoizedParameterControls;
+export default MemoizedControlsPanel;

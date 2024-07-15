@@ -6,7 +6,7 @@ import { PlotDatum, PlotMouseEvent } from "plotly.js";
 
 import { HighSymPoint } from "./types";
 
-const PhononBandsView = ({
+const BandsView = ({
   distances,
   highSymPoints,
   eigenvalues,
@@ -155,6 +155,6 @@ const PhononBandsView = ({
   );
 };
 
-const MemoizedPhononBandsView = memo(PhononBandsView);
+const MemoizedBandsView = memo(BandsView);
 
-export default MemoizedPhononBandsView;
+export default MemoizedBandsView;

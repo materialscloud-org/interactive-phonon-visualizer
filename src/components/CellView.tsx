@@ -3,8 +3,10 @@ import { Card } from "react-bootstrap";
 
 import { Atoms, WEAS } from "weas";
 
-import { VisualizerProps } from "./types";
 import ParametersContext from "./ParametersContext";
+import { VisualizerProps } from "./types";
+
+import "./CellView.scss";
 
 const defaultGuiConfig = {
   enabled: false,

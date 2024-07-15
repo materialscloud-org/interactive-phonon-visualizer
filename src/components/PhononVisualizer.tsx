@@ -7,13 +7,13 @@ import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 import useParameters from "./useParameters";
 
+import MemoizedBandsView from "./BandsView";
 import CellView from "./CellView";
-import MemoizedParameterControls from "./ParameterControls";
-import MemoizedPhononBandsView from "./PhononBandsView";
+import MemoizedControlsPanel from "./ControlsPanel";
 
-import "./Visualizer.css";
+import "./PhononVisualizer.scss";
 
-const Visualizer = ({ props }: { props: VisualizerProps }) => {
+const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
   const parameters = useParameters(props.repetitions);
   const [mode, setMode] = useState<number[]>([0, 0]);
 
@@ -31,13 +31,13 @@ const Visualizer = ({ props }: { props: VisualizerProps }) => {
       <Container fluid>
         <Row className="mb-xxl-4">
           <Col xxl="3" className="visualizer-panel">
-            <MemoizedParameterControls />
+            <MemoizedControlsPanel />
           </Col>
           <Col xxl="4" className="visualizer-panel">
             <CellView props={props} mode={mode} />
           </Col>
           <Col xxl="5" className="visualizer-panel">
-            <MemoizedPhononBandsView
+            <MemoizedBandsView
               distances={props.distances}
               highSymPoints={props.highsym_qpts}
               eigenvalues={props.eigenvalues}
@@ -50,4 +50,4 @@ const Visualizer = ({ props }: { props: VisualizerProps }) => {
   );
 };
 
-export default Visualizer;
+export default PhononVisualizer;
