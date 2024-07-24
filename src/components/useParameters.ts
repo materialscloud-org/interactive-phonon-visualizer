@@ -11,7 +11,6 @@ const useParameters = (repetitions: number[]) => {
   const [vectorLength, setVectorLength] = useState(3.5);
   const [showVectors, setShowVectors] = useState(true);
   const [speed, setSpeed] = useState(0.25);
-  const [isAnimated, setIsAnimated] = useState(true);
 
   return {
     nx,
@@ -32,8 +31,6 @@ const useParameters = (repetitions: number[]) => {
     setShowVectors,
     speed,
     setSpeed,
-    isAnimated,
-    setIsAnimated,
   };
 };
 

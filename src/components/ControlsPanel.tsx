@@ -24,7 +24,6 @@ const ControlsPanel = () => {
     setShowVectors,
     speed,
     setSpeed,
-    setIsAnimated,
   } = useContext(ParametersContext);
 
   const updateCellRepetitions = (event: React.FormEvent<HTMLFormElement>) => {
@@ -101,10 +100,6 @@ const ControlsPanel = () => {
 
   const updateSpeed = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSpeed(parseFloat(event.target.value));
-  };
-
-  const toggleAnimation = () => {
-    setIsAnimated((prevState) => !prevState);
   };
 
   return (
@@ -226,9 +221,6 @@ const ControlsPanel = () => {
                 defaultValue={speed}
                 onChange={updateSpeed}
               />
-            </Col>
-            <Col>
-              <Button onClick={toggleAnimation}>Pause</Button>
             </Col>
           </Form.Group>
         </Form>
