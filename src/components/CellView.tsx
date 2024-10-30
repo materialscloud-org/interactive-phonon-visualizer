@@ -100,6 +100,10 @@ const CellView = ({
       [-0.01, 1.01],
     ];
 
+    if (q == 0 && e == 0) {
+      // pause the animation at start as it can be quite demanding
+      weas.avr.pause();
+    }
     weas.avr.frameDuration = 4 / speed;
     weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
     weas.avr.VFManager.addSetting({
@@ -129,9 +133,9 @@ const CellView = ({
   return (
     <Card>
       <Card.Header>Drag to rotate, scroll to zoom</Card.Header>
-      <Card.Body onDoubleClick={toggleOverlay}>
+      <Card.Body onDoubleClick={toggleOverlay} style={{paddingBottom: "40px"}}>
         {!isInteractive && <Overlay />}
-        <div ref={viewerRef} style={{ width: "100%", height: "100%" }}></div>
+        <div ref={viewerRef} style={{ width: "100%", height: "450px" }}></div>
       </Card.Body>
     </Card>
   );

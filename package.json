@@ -3,27 +3,32 @@
   "private": false,
   "version": "0.1.0",
   "type": "module",
+  "module": "dist/main.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "vite",
     "start": "npm run dev",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview",
-    "predeploy": "vite build",
-    "deploy": "gh-pages -d build"
+    "preview": "vite preview"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
     "plotly.js": "^2.33.0",
-    "react": "^18.3.1",
-    "react-bootstrap": "^2.10.2",
-    "react-dom": "^18.3.1",
     "react-plotly.js": "^2.6.0",
     "sass": "^1.77.4",
     "weas": "^0.1.11"
   },
+  "peerDependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
+    "react": "^18.3.1",
+    "react-bootstrap": "^2.10.2",
+    "react-dom": "^18.3.1"
+  },
   "devDependencies": {
+    "@types/node": "^22.8.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-plotly.js": "^2.6.3",
@@ -34,6 +39,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.7",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "vite-plugin-lib-inject-css": "^2.1.1"
   }
 }

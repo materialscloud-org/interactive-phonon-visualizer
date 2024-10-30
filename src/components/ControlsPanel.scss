@@ -1,8 +1,9 @@
 #cellRepetitions {
   display: flex;
 
+  padding: 0rem .275rem;
   input:not(:last-child) {
-    margin-right: 1em;
+    margin-right: 0.1em;
   }
 }
 

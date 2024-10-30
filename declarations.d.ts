@@ -40,6 +40,7 @@ declare module "weas" {
     tjs: {
       updateCameraAndControls(props: { direction: number[] }): void;
     };
+    pause(): void;
   }
 
   export class WEAS {

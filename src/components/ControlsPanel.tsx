@@ -109,7 +109,7 @@ const ControlsPanel = () => {
         <Form onSubmit={updateCellRepetitions}>
           <Form.Group as={Row} className="controls-group">
             <Form.Label>Repetitions</Form.Label>
-            <Col xs="8" id="cellRepetitions">
+            <Col xs="9" id="cellRepetitions">
               <Form.Control
                 id="cellRepetitionX"
                 defaultValue={nx}
@@ -129,8 +129,8 @@ const ControlsPanel = () => {
                 min="1"
               />
             </Col>
-            <Col>
-              <Button type="submit">
+            <Col xs="3">
+              <Button type="submit" size="sm">
                 <i className="bi bi-repeat" />
               </Button>
             </Col>
@@ -142,13 +142,13 @@ const ControlsPanel = () => {
               <Form.Label>Camera</Form.Label>
             </Col>
             <Col>
-              <Button variant="secondary" value="x" onClick={updateCamera}>
+              <Button size="sm" variant="secondary" value="x" onClick={updateCamera}>
                 X
               </Button>
-              <Button variant="secondary" value="y" onClick={updateCamera}>
+              <Button size="sm" variant="secondary" value="y" onClick={updateCamera}>
                 Y
               </Button>
-              <Button variant="secondary" value="z" onClick={updateCamera}>
+              <Button size="sm" variant="secondary" value="z" onClick={updateCamera}>
                 Z
               </Button>
             </Col>
