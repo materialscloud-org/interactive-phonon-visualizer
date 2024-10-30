@@ -9,14 +9,15 @@ import { VisualizerProps } from "./types";
 import "./CellView.scss";
 
 const defaultGuiConfig = {
-  enabled: false,
   components: {
+    enabled: false,
     atomsControl: true,
     colorControl: true,
     cameraControls: false,
     buttons: true,
   },
   buttons: {
+    enabled: true,
     fullscreen: true,
     undo: false,
     redo: false,
@@ -106,12 +107,6 @@ const CellView = ({
     }
     weas.avr.frameDuration = 4 / speed;
     weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
-    weas.avr.VFManager.addSetting({
-      origins: "positions",
-      vectors: "movement",
-      color: "red",
-      radius: 0.1,
-    });
     weas.avr.showCell = showCell;
     weas.avr.VFManager.show = showVectors;
     weas.avr.drawModels();
