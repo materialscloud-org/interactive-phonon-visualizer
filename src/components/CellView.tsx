@@ -91,7 +91,7 @@ const CellView = ({
       atoms: atoms,
       eigenvectors: props.vectors[q][e],
       amplitude: amplitude * 5,
-      nframes: 20 / speed,
+      nframes: 10 / speed,
       kpoint: props.qpoints[q],
       repeat: [nx, ny, nz],
     });
@@ -105,7 +105,7 @@ const CellView = ({
       // pause the animation at start as it can be quite demanding
       weas.avr.pause();
     }
-    weas.avr.frameDuration = 4 / speed;
+    weas.avr.frameDuration = 15 / speed;
     weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
     weas.avr.showCell = showCell;
     weas.avr.VFManager.show = showVectors;

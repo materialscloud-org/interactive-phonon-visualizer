@@ -18,7 +18,7 @@
     "plotly.js": "^2.33.0",
     "react-plotly.js": "^2.6.0",
     "sass": "^1.77.4",
-    "weas": "^0.1.26"
+    "weas": "^0.1.27"
   },
   "peerDependencies": {
     "bootstrap": "^5.3.3",
