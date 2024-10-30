@@ -29,14 +29,14 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
   return (
     <ParametersContext.Provider value={parameters}>
       <Container fluid>
-        <Row className="mb-xxl-4">
-          <Col xxl="3" className="visualizer-panel">
+        <Row className="mb-xxl-4 g-2">
+          <Col lg="3" className="visualizer-panel">
             <MemoizedControlsPanel />
           </Col>
-          <Col xxl="4" className="visualizer-panel">
+          <Col lg="4" className="visualizer-panel">
             <CellView props={props} mode={mode} />
           </Col>
-          <Col xxl="5" className="visualizer-panel">
+          <Col lg="5" className="visualizer-panel">
             <MemoizedBandsView
               distances={props.distances}
               highSymPoints={props.highsym_qpts}
