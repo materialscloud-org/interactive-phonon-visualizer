@@ -9,14 +9,15 @@ import { VisualizerProps } from "./types";
 import "./CellView.scss";
 
 const defaultGuiConfig = {
-  enabled: false,
-  components: {
+  controls: {
+    enabled: false,
     atomsControl: true,
     colorControl: true,
     cameraControls: false,
     buttons: true,
   },
   buttons: {
+    enabled: false,
     fullscreen: true,
     undo: false,
     redo: false,
@@ -90,7 +91,7 @@ const CellView = ({
       atoms: atoms,
       eigenvectors: props.vectors[q][e],
       amplitude: amplitude * 5,
-      nframes: 20 / speed,
+      nframes: 10 / speed,
       kpoint: props.qpoints[q],
       repeat: [nx, ny, nz],
     });
@@ -104,14 +105,8 @@ const CellView = ({
       // pause the animation at start as it can be quite demanding
       weas.avr.pause();
     }
-    weas.avr.frameDuration = 4 / speed;
+    weas.avr.frameDuration = 15 / speed;
     weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
-    weas.avr.VFManager.addSetting({
-      origins: "positions",
-      vectors: "movement",
-      color: "red",
-      radius: 0.1,
-    });
     weas.avr.showCell = showCell;
     weas.avr.VFManager.show = showVectors;
     weas.avr.drawModels();
