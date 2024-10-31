@@ -9,7 +9,7 @@ import { VisualizerProps } from "./types";
 import "./CellView.scss";
 
 const defaultGuiConfig = {
-  components: {
+  controls: {
     enabled: false,
     atomsControl: true,
     colorControl: true,
@@ -17,7 +17,7 @@ const defaultGuiConfig = {
     buttons: true,
   },
   buttons: {
-    enabled: true,
+    enabled: false,
     fullscreen: true,
     undo: false,
     redo: false,
