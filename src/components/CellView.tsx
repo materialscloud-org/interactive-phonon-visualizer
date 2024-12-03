@@ -26,43 +26,6 @@ const defaultGuiConfig = {
   },
 };
 
-const InteractionGuard = ({ children }: { children: React.ReactNode }) => {
-  const [isInteractive, setIsInteractive] = useState(false);
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
-  let mouseNoteClass = "mouse-interact-note";
-  if (isInteractive) {
-    mouseNoteClass += " off";
-  }
-
-  let guardClassName = "";
-  if (!isInteractive) guardClassName += " disable-mouse";
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(event.target as Node)
-      ) {
-        setIsInteractive(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  return (
-    <div ref={wrapperRef} onClick={() => setIsInteractive(true)}>
-      <div className={guardClassName}>{children}</div>
-      <div className={mouseNoteClass} onClick={() => setIsInteractive(true)}>
-        Click to interact
-      </div>
-    </div>
-  );
-};
-
 const CellView = ({
   props,
   mode,
@@ -182,6 +145,43 @@ const CellView = ({
         </Button>
       </Card.Body>
     </Card>
+  );
+};
+
+const InteractionGuard = ({ children }: { children: React.ReactNode }) => {
+  const [isInteractive, setIsInteractive] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  let mouseNoteClass = "mouse-interact-note";
+  if (isInteractive) {
+    mouseNoteClass += " off";
+  }
+
+  let guardClassName = "";
+  if (!isInteractive) guardClassName += " disable-mouse";
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsInteractive(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div ref={wrapperRef} onClick={() => setIsInteractive(true)}>
+      <div className={guardClassName}>{children}</div>
+      <div className={mouseNoteClass} onClick={() => setIsInteractive(true)}>
+        Click to interact
+      </div>
+    </div>
   );
 };
 
