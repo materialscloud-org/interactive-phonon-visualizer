@@ -142,13 +142,28 @@ const ControlsPanel = () => {
               <Form.Label>Camera</Form.Label>
             </Col>
             <Col>
-              <Button size="sm" variant="secondary" value="x" onClick={updateCamera}>
+              <Button
+                size="sm"
+                variant="secondary"
+                value="x"
+                onClick={updateCamera}
+              >
                 X
               </Button>
-              <Button size="sm" variant="secondary" value="y" onClick={updateCamera}>
+              <Button
+                size="sm"
+                variant="secondary"
+                value="y"
+                onClick={updateCamera}
+              >
                 Y
               </Button>
-              <Button size="sm" variant="secondary" value="z" onClick={updateCamera}>
+              <Button
+                size="sm"
+                variant="secondary"
+                value="z"
+                onClick={updateCamera}
+              >
                 Z
               </Button>
             </Col>
@@ -197,7 +212,7 @@ const ControlsPanel = () => {
             <Col xs="8">
               <Form.Range
                 min="1"
-                max="5"
+                max="4"
                 step="0.1"
                 defaultValue={vectorLength}
                 onChange={updateVectors}

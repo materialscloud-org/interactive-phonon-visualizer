@@ -7,8 +7,8 @@ const useParameters = (repetitions: number[]) => {
   const [nz, setNz] = useState(Nz);
   const [cameraDirection, setCameraDirection] = useState([0, 0, 1]);
   const [showCell, setShowCell] = useState(true);
-  const [amplitude, setAmplitude] = useState(0.30);
-  const [vectorLength, setVectorLength] = useState(3.5);
+  const [amplitude, setAmplitude] = useState(0.3);
+  const [vectorLength, setVectorLength] = useState(1.5);
   const [showVectors, setShowVectors] = useState(true);
   const [speed, setSpeed] = useState(0.25);
 
