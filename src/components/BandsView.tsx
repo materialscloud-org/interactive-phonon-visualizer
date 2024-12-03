@@ -6,67 +6,6 @@ import { PlotDatum, PlotMouseEvent } from "plotly.js";
 
 import { HighSymPoint } from "./types";
 
-const getPlotData = (
-  bands: number[][],
-  distances: number[],
-  hoveredPoint: PlotDatum | null,
-  selectedPoint: PlotDatum | null
-) => {
-  return bands.map((band, index) => ({
-    x: distances,
-    y: band,
-    mode: "lines+markers",
-    hoverinfo: "none",
-    line: {
-      color: "#1f77b4",
-      width: hoveredPoint?.curveNumber === index ? 4 : 2,
-    },
-    marker: {
-      // size should be 2 if hovered on, 4 if selected, 0 otherwise; hover/selection is determined by both x and y, no border
-      size: band.map((_, index) =>
-        selectedPoint?.x === distances[index] &&
-        selectedPoint?.y === band[index]
-          ? 10
-          : hoveredPoint?.x === distances[index] &&
-            hoveredPoint?.y === band[index]
-          ? 14
-          : 0
-      ),
-      color: band.map((_, index) =>
-        selectedPoint?.x === distances[index] &&
-        selectedPoint?.y === band[index]
-          ? "red"
-          : hoveredPoint?.x === distances[index] &&
-            hoveredPoint?.y === band[index]
-          ? "blue"
-          : "#1f77b4"
-      ),
-      // add opaque border around marker of width 1 (black) if selected, width 10 (lightblue) if hovered on
-      line: {
-        width: band.map((_, index) =>
-          selectedPoint?.x === distances[index] &&
-          selectedPoint?.y === band[index]
-            ? 1
-            : hoveredPoint?.x === distances[index] &&
-              hoveredPoint?.y === band[index]
-            ? 8
-            : 0
-        ),
-        color: band.map((_, index) =>
-          selectedPoint?.x === distances[index] &&
-          selectedPoint?.y === band[index]
-            ? "black"
-            : hoveredPoint?.x === distances[index] &&
-              hoveredPoint?.y === band[index]
-            ? "lightblue"
-            : "transparent"
-        ),
-      },
-      opacity: 1,
-    },
-  }));
-};
-
 const BandsView = ({
   distances,
   highSymPoints,
@@ -133,6 +72,67 @@ const BandsView = ({
       </Card.Body>
     </Card>
   );
+};
+
+const getPlotData = (
+  bands: number[][],
+  distances: number[],
+  hoveredPoint: PlotDatum | null,
+  selectedPoint: PlotDatum | null
+) => {
+  return bands.map((band, index) => ({
+    x: distances,
+    y: band,
+    mode: "lines+markers",
+    hoverinfo: "none",
+    line: {
+      color: "#1f77b4",
+      width: hoveredPoint?.curveNumber === index ? 4 : 2,
+    },
+    marker: {
+      // size should be 2 if hovered on, 4 if selected, 0 otherwise; hover/selection is determined by both x and y, no border
+      size: band.map((_, index) =>
+        selectedPoint?.x === distances[index] &&
+        selectedPoint?.y === band[index]
+          ? 10
+          : hoveredPoint?.x === distances[index] &&
+            hoveredPoint?.y === band[index]
+          ? 14
+          : 0
+      ),
+      color: band.map((_, index) =>
+        selectedPoint?.x === distances[index] &&
+        selectedPoint?.y === band[index]
+          ? "red"
+          : hoveredPoint?.x === distances[index] &&
+            hoveredPoint?.y === band[index]
+          ? "blue"
+          : "#1f77b4"
+      ),
+      // add opaque border around marker of width 1 (black) if selected, width 10 (lightblue) if hovered on
+      line: {
+        width: band.map((_, index) =>
+          selectedPoint?.x === distances[index] &&
+          selectedPoint?.y === band[index]
+            ? 1
+            : hoveredPoint?.x === distances[index] &&
+              hoveredPoint?.y === band[index]
+            ? 8
+            : 0
+        ),
+        color: band.map((_, index) =>
+          selectedPoint?.x === distances[index] &&
+          selectedPoint?.y === band[index]
+            ? "black"
+            : hoveredPoint?.x === distances[index] &&
+              hoveredPoint?.y === band[index]
+            ? "lightblue"
+            : "transparent"
+        ),
+      },
+      opacity: 1,
+    },
+  }));
 };
 
 const getLayout = (
