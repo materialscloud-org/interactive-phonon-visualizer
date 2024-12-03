@@ -6,49 +6,6 @@ import { PlotDatum, PlotMouseEvent } from "plotly.js";
 
 import { HighSymPoint } from "./types";
 
-const getLayout = (
-  highSymPoints: HighSymPoint[],
-  distances: number[],
-  eigenvalues: number[][]
-) => ({
-  showlegend: false,
-  hovermode: "closest",
-  xaxis: {
-    linewidth: 0,
-    linecolor: "transparent",
-    tickvals: highSymPoints.map(([index]) => distances[index]),
-    ticktext: highSymPoints.map(([, label]) => label),
-    range: [Math.min(...distances.flat()), Math.max(...distances.flat())],
-  },
-  yaxis: {
-    title: "Frequency (cm-1)",
-    linewidth: 0,
-    linecolor: "transparent",
-    ticklen: 5,
-    range: [Math.min(...eigenvalues.flat()), Math.max(...eigenvalues.flat())],
-  },
-  // vertical lines at high-symmetry points
-  shapes: highSymPoints.map(([index]) => ({
-    type: "line",
-    yref: "paper",
-    x0: distances[index],
-    y0: 0,
-    x1: distances[index],
-    y1: 1,
-    line: {
-      width: 0.5,
-    },
-  })),
-  dragmode: "zoom",
-  autosize: true,
-  margin: {
-    l: 55,
-    r: 10,
-    b: 25,
-    t: 40,
-  },
-});
-
 const getPlotData = (
   bands: number[][],
   distances: number[],
@@ -177,6 +134,49 @@ const BandsView = ({
     </Card>
   );
 };
+
+const getLayout = (
+  highSymPoints: HighSymPoint[],
+  distances: number[],
+  eigenvalues: number[][]
+) => ({
+  showlegend: false,
+  hovermode: "closest",
+  xaxis: {
+    linewidth: 0,
+    linecolor: "transparent",
+    tickvals: highSymPoints.map(([index]) => distances[index]),
+    ticktext: highSymPoints.map(([, label]) => label),
+    range: [Math.min(...distances.flat()), Math.max(...distances.flat())],
+  },
+  yaxis: {
+    title: "Frequency (cm-1)",
+    linewidth: 0,
+    linecolor: "transparent",
+    ticklen: 5,
+    range: [Math.min(...eigenvalues.flat()), Math.max(...eigenvalues.flat())],
+  },
+  // vertical lines at high-symmetry points
+  shapes: highSymPoints.map(([index]) => ({
+    type: "line",
+    yref: "paper",
+    x0: distances[index],
+    y0: 0,
+    x1: distances[index],
+    y1: 1,
+    line: {
+      width: 0.5,
+    },
+  })),
+  dragmode: "zoom",
+  autosize: true,
+  margin: {
+    l: 55,
+    r: 10,
+    b: 25,
+    t: 40,
+  },
+});
 
 const MemoizedBandsView = memo(BandsView);
 
