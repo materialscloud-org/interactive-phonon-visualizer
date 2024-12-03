@@ -1,5 +1,5 @@
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
-import { Card } from "react-bootstrap";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Card, Button } from "react-bootstrap";
 
 import { Atoms, WEAS } from "weas";
 
@@ -11,10 +11,10 @@ import "./CellView.scss";
 const defaultGuiConfig = {
   controls: {
     enabled: false,
-    atomsControl: true,
-    colorControl: true,
+    atomsControl: false,
+    colorControl: false,
     cameraControls: false,
-    buttons: true,
+    buttons: false,
   },
   buttons: {
     enabled: false,
@@ -33,7 +33,7 @@ const CellView = ({
   props: VisualizerProps;
   mode: number[];
 }) => {
-  const [isInteractive, setIsInteractive] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const weasRef = useRef<WEAS | null>(null);
   const {
@@ -48,19 +48,6 @@ const CellView = ({
     speed,
     // isAnimated,
   } = useContext(ParametersContext);
-
-  const toggleOverlay = useCallback(() => {
-    setIsInteractive((prevState) => !prevState);
-  }, []);
-
-  const Overlay = () => (
-    <div className="overlay-div">
-      <span>
-        Double-click to toggle interactions on and off <br />{" "}
-        <small>(This feature is not available on iPad and iPhone)</small>
-      </span>
-    </div>
-  );
 
   useEffect(() => {
     const [q, e] = mode;
@@ -126,14 +113,75 @@ const CellView = ({
     vectorLength,
   ]);
 
+  const togglePlay = () => {
+    if (weasRef.current) {
+      if (weasRef.current.avr.isPlaying) {
+        weasRef.current.avr.pause();
+        setIsPlaying(false);
+      } else {
+        weasRef.current.avr.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
   return (
     <Card>
       <Card.Header>Drag to rotate, scroll to zoom</Card.Header>
-      <Card.Body onDoubleClick={toggleOverlay} style={{paddingBottom: "40px"}}>
-        {!isInteractive && <Overlay />}
-        <div ref={viewerRef} style={{ width: "100%", height: "450px" }}></div>
+      <Card.Body className="p-0">
+        <InteractionGuard>
+          <div
+            className="weas-container"
+            ref={viewerRef}
+            style={{ width: "100%", height: "450px" }}
+          ></div>
+        </InteractionGuard>
+        <Button className="play-button" size="sm" onClick={togglePlay}>
+          {isPlaying ? (
+            <i className="bi bi-pause-fill"></i>
+          ) : (
+            <i className="bi bi-play-fill"></i>
+          )}
+        </Button>
       </Card.Body>
     </Card>
+  );
+};
+
+const InteractionGuard = ({ children }: { children: React.ReactNode }) => {
+  const [isInteractive, setIsInteractive] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+
+  let mouseNoteClass = "mouse-interact-note";
+  if (isInteractive) {
+    mouseNoteClass += " off";
+  }
+
+  let guardClassName = "";
+  if (!isInteractive) guardClassName += " disable-mouse";
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
+        setIsInteractive(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div ref={wrapperRef} onClick={() => setIsInteractive(true)}>
+      <div className={guardClassName}>{children}</div>
+      <div className={mouseNoteClass} onClick={() => setIsInteractive(true)}>
+        Click to interact
+      </div>
+    </div>
   );
 };
 
