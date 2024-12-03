@@ -91,6 +91,7 @@ const CellView = ({
       atoms: atoms,
       eigenvectors: props.vectors[q][e],
       amplitude: amplitude * 5,
+      factor: vectorLength / (amplitude * 5),
       nframes: 10 / speed,
       kpoint: props.qpoints[q],
       repeat: [nx, ny, nz],
