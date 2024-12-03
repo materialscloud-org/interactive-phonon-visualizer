@@ -4,7 +4,7 @@ import Plot from "react-plotly.js";
 
 import { PlotDatum, PlotMouseEvent } from "plotly.js";
 
-import { HighSymPoint } from "./types";
+import { HighSymPoint, PlotState } from "./types";
 
 const BandsView = ({
   distances,
@@ -24,7 +24,7 @@ const BandsView = ({
     eigenvalues.map((row) => row[colIndex])
   );
 
-  const [plotState, setPlotState] = useState({
+  const [plotState, setPlotState] = useState<PlotState>({
     data: getPlotData(bands, distances, hoveredPoint, selectedPoint),
     layout: getLayout(highSymPoints, distances, eigenvalues),
     frames: [],
@@ -139,7 +139,7 @@ const getLayout = (
   highSymPoints: HighSymPoint[],
   distances: number[],
   eigenvalues: number[][]
-) => ({
+): Partial<Plotly.Layout> => ({
   showlegend: false,
   hovermode: "closest",
   xaxis: {

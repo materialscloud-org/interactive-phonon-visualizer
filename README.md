@@ -14,6 +14,12 @@ The app is self-tested via the `App` component against local test data (`/data/t
 
 ## Publishing a new version
 
+Make sure build works locally without problems:
+
+```bash
+npm run build
+```
+
 To make a new version and publish to npm via GitHub Actions:
 
 ```bash

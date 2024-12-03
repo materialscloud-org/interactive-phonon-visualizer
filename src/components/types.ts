@@ -19,3 +19,10 @@ export interface VisualizerProps {
   highsym_qpts: HighSymPoint[];
   vectors: number[][][][][];
 }
+
+export interface PlotState {
+  data: Partial<Plotly.Data>[];
+  layout: Partial<Plotly.Layout>;
+  frames: Partial<Plotly.Frame>[];
+  config: Partial<Plotly.Config>;
+}

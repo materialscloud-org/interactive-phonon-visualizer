@@ -28,11 +28,13 @@ declare module "weas" {
     frameDuration: number;
     VFManager: VFManager;
     showCell: boolean;
+    isPlaying: boolean;
     drawModels(): void;
     fromPhononMode(props: {
       atoms: Atoms;
       eigenvectors: number[][][];
       amplitude: number;
+      factor: number;
       nframes: number;
       kpoint: number[];
       repeat: number[];
@@ -41,6 +43,7 @@ declare module "weas" {
       updateCameraAndControls(props: { direction: number[] }): void;
     };
     pause(): void;
+    play(): void;
   }
 
   export class WEAS {
