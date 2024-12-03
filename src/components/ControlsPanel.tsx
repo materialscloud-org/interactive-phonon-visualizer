@@ -193,7 +193,7 @@ const ControlsPanel = () => {
         </Form>
         <Form>
           <Form.Group as={Row} className="controls-group">
-            <Form.Label>Vectors</Form.Label>
+            <Form.Label>Vector length</Form.Label>
             <Col xs="8">
               <Form.Range
                 min="1"
