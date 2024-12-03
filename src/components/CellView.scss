@@ -4,7 +4,7 @@
   position: absolute;
   left: 0;
   top: 40px;
-  height: calc(100% - 40px);
+  height: calc(100% - 80px);
   width: 100%;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.025);
@@ -22,4 +22,41 @@
     font-weight: 600;
     color: rgb(80, 80, 80);
   }
+}
+
+.weas-container {
+  overflow: hidden;
+  padding: 0;
+}
+
+.disable-mouse {
+  pointer-events: none;
+}
+
+.mouse-interact-note {
+  background-color: #f8f8f8;
+  border: 1px solid #999999;
+  color: #353434;
+  padding: 1px 6px;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 15px;
+  right: 20px;
+  z-index: 3;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    filter: brightness(90%);
+  }
+}
+
+.off {
+  display: none;
+}
+
+.play-button {
+  position: absolute;
+  bottom: 15px;
+  left: 20px;
 }
