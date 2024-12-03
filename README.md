@@ -11,3 +11,12 @@ The React component implemented in this repo mimics the features of the [phonon 
 ## Testing
 
 The app is self-tested via the `App` component against local test data (`/data/test.json`).
+
+## Publishing a new version
+
+To make a new version and publish to npm via GitHub Actions:
+
+```bash
+npm version <major/minor/patch>
+git push --follow-tags
+```
