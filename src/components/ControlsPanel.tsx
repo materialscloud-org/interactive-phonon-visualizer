@@ -187,7 +187,7 @@ const ControlsPanel = () => {
             <Col xs="8">
               <Form.Range
                 id="amplitudeRange"
-                min="0"
+                min="0.01"
                 max="1"
                 step="0.01"
                 defaultValue={amplitude}
@@ -211,7 +211,7 @@ const ControlsPanel = () => {
             <Form.Label>Vector length</Form.Label>
             <Col xs="8">
               <Form.Range
-                min="1"
+                min="0.1"
                 max="4"
                 step="0.1"
                 defaultValue={vectorLength}

@@ -89,11 +89,11 @@ const CellView = ({
       [-0.01, 1.01],
     ];
 
-    if (q == 0 && e == 0) {
-      // pause the animation at start as it can be demanding
+    if (isPlaying) {
+      weas.avr.play();
+    } else {
       weas.avr.pause();
     }
-    setIsPlaying(weas.avr.isPlaying);
     weas.avr.frameDuration = 15 / speed;
     weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
     weas.avr.showCell = showCell;
