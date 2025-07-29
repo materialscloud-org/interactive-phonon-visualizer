@@ -1,0 +1,5 @@
+pyyaml
+ase
+pymatgen
+qe_tools
+seekpath
