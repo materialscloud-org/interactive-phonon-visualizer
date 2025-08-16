@@ -6,8 +6,10 @@ import "./App.scss";
 
 function App() {
   return (
-    // @ts-expect-error otherwise, each part of data would need unpacking
-    <PhononVisualizer props={{ title: "Demo", ...data }} />
+    <div>
+      {/* Pass as any to avoid ts problems. */}
+      <PhononVisualizer props={{ title: "Demo", ...data } as any} />
+    </div>
   );
 }
 

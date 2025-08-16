@@ -41,6 +41,8 @@ declare module "weas" {
     }): void;
     tjs: {
       updateCameraAndControls(props: { direction: number[] }): void;
+      camera: THREE.PerspectiveCamera;
+      controls: THREE.OrbitControls;
     };
     pause(): void;
     play(): void;
@@ -56,4 +58,9 @@ declare module "weas" {
     clear(): void;
     render(): void;
   }
+}
+
+declare module "lodash.merge" {
+  import { merge } from "lodash";
+  export default merge;
 }

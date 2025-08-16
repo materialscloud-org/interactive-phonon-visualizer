@@ -49,8 +49,34 @@ const CellView = ({
     // isAnimated,
   } = useContext(ParametersContext);
 
+  // track initialisation
+  const isFirstRender = useRef(true);
+
   useEffect(() => {
     const [q, e] = mode;
+    // Initialize WEAS
+    if (!weasRef.current) {
+      const weasInstance = new WEAS({
+        domElement: viewerRef.current,
+        guiConfig: defaultGuiConfig,
+        viewerConfig: { backgroundColor: "#0000FF" },
+      });
+      weasInstance.avr.modelStyle = 1;
+      weasInstance.avr.bondedAtoms = true;
+      weasInstance.avr.atomScale = 0.1;
+      weasInstance.avr.bondManager.hideLongBonds = false;
+      weasRef.current = weasInstance;
+    }
+
+    const weas: WEAS = weasRef.current;
+    // Save camera BEFORE clearing/updating
+    let savedCameraPos: any;
+    let savedTarget: any;
+
+    if (!isFirstRender.current) {
+      savedCameraPos = weas.avr.tjs.camera.position.clone();
+      savedTarget = weas.avr.tjs.controls.target.clone();
+    }
 
     const atoms = new Atoms({
       symbols: props.atom_types,
@@ -59,19 +85,17 @@ const CellView = ({
     });
 
     if (!weasRef.current) {
-      const weas = new WEAS({
+      const weasInstance = new WEAS({
         domElement: viewerRef.current,
         guiConfig: defaultGuiConfig,
         viewerConfig: { backgroundColor: "#0000FF" },
       });
-      weas.avr.modelStyle = 1;
-      weas.avr.bondedAtoms = true;
-      weas.avr.atomScale = 0.1;
-      weas.avr.bondManager.hideLongBonds = false;
-      weasRef.current = weas;
+      weasInstance.avr.modelStyle = 1;
+      weasInstance.avr.bondedAtoms = true;
+      weasInstance.avr.atomScale = 0.1;
+      weasInstance.avr.bondManager.hideLongBonds = false;
+      weasRef.current = weasInstance;
     }
-
-    const weas: WEAS = weasRef.current;
 
     weas.clear();
     weas.avr.fromPhononMode({
@@ -89,13 +113,21 @@ const CellView = ({
       [-0.01, 1.01],
     ];
 
-    if (isPlaying) {
-      weas.avr.play();
-    } else {
-      weas.avr.pause();
-    }
+    if (isPlaying) weas.avr.play();
+    else weas.avr.pause();
+
     weas.avr.frameDuration = 15 / speed;
-    weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
+
+    // use init state to determine whether to update camera.
+    if (isFirstRender.current) {
+      weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
+      isFirstRender.current = false;
+    } else if (savedCameraPos && savedTarget) {
+      weas.avr.tjs.camera.position.copy(savedCameraPos);
+      weas.avr.tjs.controls.target.copy(savedTarget);
+      weas.avr.tjs.controls.update();
+    }
+
     weas.avr.showCell = showCell;
     weas.avr.VFManager.show = showVectors;
     weas.avr.drawModels();

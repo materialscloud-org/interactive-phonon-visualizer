@@ -18,6 +18,14 @@ export interface VisualizerProps {
   distances: number[];
   highsym_qpts: HighSymPoint[];
   vectors: number[][][][][];
+
+  // general appearance overrides.
+  plotlyLayoutFormat?: Partial<Plotly.Layout>;
+  plotlyTraceFormat?: Partial<Plotly.Data>[];
+
+  // hovered and selected overrides.
+  plotlyHoverTraceFormat?: Partial<Plotly.Data>[];
+  plotlySelectedTraceFormat?: Partial<Plotly.Data>[];
 }
 
 export interface PlotState {

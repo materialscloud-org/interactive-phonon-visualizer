@@ -42,6 +42,10 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
               highSymPoints={props.highsym_qpts}
               eigenvalues={props.eigenvalues}
               updateMode={updateMode}
+              plotlyLayoutFormat={props.plotlyLayoutFormat}
+              plotlyTraceFormat={props.plotlyTraceFormat}
+              plotlyHoverTraceFormat={props.plotlyHoverTraceFormat}
+              plotlySelectedTraceFormat={props.plotlySelectedTraceFormat}
             />
           </Col>
         </Row>
