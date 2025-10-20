@@ -1,0 +1,20 @@
+[project]
+name = "phonon-web-tools"
+version = "0.1.0"
+description = "Tools to convert phonon visualization data into a web-friendly format."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "pyyaml",
+  "ase~=3.26",
+  "pymatgen",
+  "qe-tools~=2.3",
+  "seekpath~=2.1",
+]
+
+[project.scripts]
+phonon-web-tools = "phonon_web_tools.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
