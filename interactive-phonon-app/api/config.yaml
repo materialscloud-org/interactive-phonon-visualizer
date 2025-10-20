@@ -1,0 +1,54 @@
+window_title: "Interactive phonon visualizer"
+page_title: "Interactive phonon visualizer"
+
+#custom_css_files:
+# input_data:
+#    - custom.css
+#  process_data:
+#    - custom.css
+
+#custom_js_files:
+#  input_data:
+#  process_data:
+#    - custom.js
+
+about_section_title: "About the interactive phonon visualizer"
+
+templates:
+  how_to_cite: null
+  about: "custom_about.html"
+  select_content: "visualizer_select_structure.html"
+
+use_upload_structure_block: False
+
+additional_accordion_entries:
+  - header: "Acknowledgements"
+    template_page: ack.html
+
+data_folder: "data/"
+
+data:
+  Bi:
+    title: "Bi"
+    filename: Bi.json
+  BN:
+    title: "BN"
+    filename: BN.json
+  C:
+    title: "Graphene"
+    filename: C.json
+  PbI2:
+    title: "PbI₂"
+    filename: PbI2.json
+  MoS2-MoS2:
+    title: "MoS₂"
+    filename: MoS2-MoS2.json
+  PbTe:
+    title: "PbTe"
+    filename: PbTe.json
+  AgNO2:
+    title: "AgNO₂"
+    filename: AgNO2.json
+  BaTiO3:
+    title: "BaTiO₃"
+    filename: BaTiO3.json

@@ -1,0 +1,22 @@
+:root {
+  .card {
+    height: 100%;
+  }
+
+  form {
+    .row {
+      align-items: center;
+      max-width: 600px;
+    }
+
+    .row:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0;
+    }
+  }
+}

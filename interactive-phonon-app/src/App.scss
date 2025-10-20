@@ -1,0 +1,36 @@
+:root {
+  margin: 1em;
+
+  a {
+    text-decoration: none;
+  }
+}
+
+/* overload boostrap tab style */
+.nav-tabs {
+  .nav-link {
+    color: grey;
+    background-color: whitesmoke;
+    border: 1px solid #ddd !important;
+    border-bottom-color: #999 !important;
+
+    &:hover {
+      color: #4682b4;
+    }
+
+    &.active {
+      border-top: 1px solid #999 !important;
+      border-left: 1px solid #999 !important;
+      border-right: 1px solid #999 !important;
+      border-bottom: 1px solid white !important;
+    }
+  }
+
+}
+
+.tab-content {
+  margin-top: -1px;
+  border: 1px solid #999 !important;
+  box-shadow: var(--bs-box-shadow);
+  padding: 1.5em;
+}
