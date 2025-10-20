@@ -8,9 +8,14 @@ base_folder = Path(__file__).parent.parent / "./data"
 
 required_files = {"scf.in", "scf.out", "matdyn.modes"}
 
+starting_supercells = {"graphene": (5, 5, 1)}
+
 for folder in base_folder.iterdir():
     if folder.is_dir():
         files = {f.name for f in folder.iterdir() if f.is_file()}
         if required_files.issubset(files):
             print(f"Converting {folder}")
-            convert_qe_phonon_folder(folder)
+            convert_qe_phonon_folder(
+                folder,
+                starting_supercell=starting_supercells.get(folder.name, (3, 3, 3)),
+            )
