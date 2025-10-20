@@ -1,6 +1,6 @@
 import PhononVisualizer from "./components/PhononVisualizer";
 
-import data from "../data/test.json";
+import data from "../../data/test.json";
 
 import "./App.scss";
 
