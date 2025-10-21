@@ -119,12 +119,13 @@ def replace_highsym_labels(_highsym_qpts):
     return highsym_qpts
 
 
-def merge_neighboring_highsym_labels(highsym_qpts):
+def detect_kpath_discontinuities(highsym_qpts):
     """
     Merge the high symmetry labels that are neighboring each other,
     as this indicates a discontinuity in the path.
     """
     merged_highsym_qpts = []
+    discont_indexes = []
     iq = 0
     while iq < len(highsym_qpts) - 1:
         pos, label = highsym_qpts[iq]
@@ -135,6 +136,7 @@ def merge_neighboring_highsym_labels(highsym_qpts):
             if label != next_label:
                 # merge only if labels differ
                 merged_highsym_qpts.append((pos, f"{label}|{next_label}"))
+                discont_indexes.append(pos)
             else:
                 merged_highsym_qpts.append((pos, label))
             # skip next pos:
@@ -144,7 +146,7 @@ def merge_neighboring_highsym_labels(highsym_qpts):
         iq += 1
     # Last one needs to be appended manually:
     merged_highsym_qpts.append(highsym_qpts[-1])
-    return merged_highsym_qpts
+    return discont_indexes, merged_highsym_qpts
 
 
 class PhononWebConverter:
@@ -191,7 +193,10 @@ class PhononWebConverter:
                 seekpath_symprec,
             )
         highsym_qpts = replace_highsym_labels(highsym_qpts)
-        self.highsym_qpts = merge_neighboring_highsym_labels(highsym_qpts)
+
+        disc, updated_highsym_qpts = detect_kpath_discontinuities(highsym_qpts)
+        self.discont_indexes = disc
+        self.highsym_qpts = updated_highsym_qpts
 
         self.distances = self._get_qpt_distances()
 
@@ -222,10 +227,10 @@ class PhononWebConverter:
 
         # Remove the gap for merged labels
         adjusted_distances = np.copy(distances)
-        for i, (pos, label) in enumerate(self.highsym_qpts):
-            if "|" in label:  # indicates a merging of labels
-                gap = distances[pos + 1] - distances[pos]
-                adjusted_distances[pos + 1 :] -= gap
+
+        for idx in self.discont_indexes:
+            gap = distances[idx + 1] - distances[idx]
+            adjusted_distances[idx + 1 :] -= gap
 
         return adjusted_distances
 
@@ -254,7 +259,9 @@ class PhononWebConverter:
         eig[0] = self.eigenvalues[0]
         eiv[0] = vectors[0]
         for k in range(1, self.n_qpts):
-            order = estimate_band_connection(vectors[k - 1].T, vectors[k].T, order)
+            if (k - 1) not in self.discont_indexes:
+                # Doesn't seem to work well for discontinuous points, just keep the order in these cases
+                order = estimate_band_connection(vectors[k - 1].T, vectors[k].T, order)
             for n, i in enumerate(order):
                 eig[k, n] = self.eigenvalues[k, i]
                 eiv[k, n] = vectors[k, i]
