@@ -4,9 +4,20 @@ import axios from "axios";
 
 import { VisualizerProps } from "./interfaces";
 import SelectPanel from "./select/SelectPanel";
-import VisualizerPanel from "./visualize/VisualizerPanel";
+import VisualizerPanel from "./VisualizerPanel";
 
 const API_ROOT = "http://localhost:5000";
+
+async function get_example_data(name: string) {
+  // Load example JSON files from the public/data folder.
+  try {
+    const response = await axios.get(`/data/${name}.json`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+}
 
 const PhononsPanel = ({
   aboutLinkHandler,
@@ -25,10 +36,8 @@ const PhononsPanel = ({
           throw new Error("Example not found");
         }
         setVisualizerProps(null);
-        const result = await axios.post(`${API_ROOT}/process_example`, {
-          example: example.value,
-        });
-        setVisualizerProps({ title: result.data.title, ...result.data });
+        const result = await get_example_data(example.value);
+        setVisualizerProps({ title: result.name, ...result });
       };
 
       const handleFileForm = (form: HTMLFormElement) => {

@@ -1,8 +1,9 @@
 import json
 from pathlib import Path
+
+import yaml
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import yaml
 
 app = Flask(__name__)
 
@@ -24,6 +25,7 @@ except IOError as exc:
         raise
 
 
+# NOTE: Not used any more, examples loaded directly from public/data!
 @app.route("/process_example", methods=["POST"])
 def process_example():
     payload = request.json

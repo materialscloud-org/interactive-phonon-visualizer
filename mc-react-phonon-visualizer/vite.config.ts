@@ -9,7 +9,7 @@ export default defineConfig({
   plugins: [react(), libInjectCss()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/components/PhononVisualizer.tsx"),
+      entry: path.resolve(__dirname, "src/PhononVisualizer/index.tsx"),
       fileName: "main",
       formats: ["es"],
     },

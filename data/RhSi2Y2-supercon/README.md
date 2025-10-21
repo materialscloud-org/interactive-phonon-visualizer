@@ -1,4 +1,4 @@
-This data is taken from the MC3D superconductivity contribution.
+This data is taken from the MC3D pbesol-v1 superconductivity contribution.
 
 ```python
 matdyn_retrieved_uuid = "4d458ee8-79e6-4939-92bf-ff6540cd0f56"

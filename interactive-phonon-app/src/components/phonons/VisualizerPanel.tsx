@@ -1,7 +1,8 @@
 import { Button, Spinner } from "react-bootstrap";
 
-import { VisualizerProps } from "../interfaces";
-import Visualizer from "./Visualizer";
+import { VisualizerProps } from "./interfaces";
+
+import PhononVisualizer from "mc-react-phonon-visualizer";
 
 import "./VisualizerPanel.scss";
 
@@ -26,7 +27,7 @@ const VisualizerPanel = ({
           </span>
         )}
       </h1>
-      {props && <Visualizer props={props} />}
+      {props && <PhononVisualizer props={props} />}
     </>
   );
 };

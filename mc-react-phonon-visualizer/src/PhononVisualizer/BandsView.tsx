@@ -3,9 +3,9 @@ import { Card } from "react-bootstrap";
 import Plot from "react-plotly.js";
 
 import { PlotDatum, PlotMouseEvent } from "plotly.js";
-import { mergePlotlyFormats, mergePlotlyLayout } from "./utils";
+import { mergePlotlyFormats, mergePlotlyLayout } from "./utils.ts";
 
-import { HighSymPoint, PlotState } from "./types";
+import { HighSymPoint, PlotState } from "./types.ts";
 
 const BandsView = ({
   distances,
