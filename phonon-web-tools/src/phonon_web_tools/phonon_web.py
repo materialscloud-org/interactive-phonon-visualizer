@@ -167,7 +167,7 @@ class PhononWebConverter:
         name=None,
         seekpath_symprec=1e-04,
         reorder_eigenvalues=True,
-        starting_supercell=(3, 3, 3),
+        starting_supercell=None,
     ):
         self.cell = cell
         self.pos = pos
@@ -207,7 +207,7 @@ class PhononWebConverter:
         if name is None:
             self.name = self.chemical_formula
 
-        self.starting_supercell = starting_supercell
+        self.starting_supercell = self._get_starting_supercell(starting_supercell)
 
     def _get_qpt_distances(self):
         # calculate reciprocal lattice
@@ -269,6 +269,21 @@ class PhononWebConverter:
         # update the eigenvalues with the ordered version
         self.eigenvalues = eig
         self.eigenvectors = self._reshape_eigenvectors(eiv)
+
+    def _get_starting_supercell(self, starting_supercell):
+        if starting_supercell is not None:
+            return starting_supercell
+        pbc_estimate = []
+        for i_col in range(3):
+            col_mean = np.mean(self.qpoints[:, i_col])
+            pbc_estimate.append(
+                not np.all(np.abs(self.qpoints[:, i_col] - col_mean) <= 1e-5)
+            )
+        if all(pbc_estimate):
+            # 3D structure
+            return (3, 3, 3)
+        # otherwise e.g. (5, 5, 1)
+        return tuple(5 if pbc else 1 for pbc in pbc_estimate)
 
     def get_dict(self):
         "Return the data as a python dictionary."
