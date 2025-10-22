@@ -26,8 +26,7 @@ jobs:
       - run: uv sync --locked
       - run: uv build
 
-      - name: Publish package to PyPI
+      - name: Publish package to PyPI (using trusted publisher)
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          user: __token__
-          password: ${{ secrets.PYPI_TOKEN }}
+          packages-dir: phonon-web-tools/dist/
