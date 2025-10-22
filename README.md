@@ -1,5 +1,7 @@
 # Materials Cloud interactive phonon visualization tools
 
+[![npm version](https://img.shields.io/npm/v/mc-react-phonon-visualizer.svg)](https://www.npmjs.com/package/mc-react-phonon-visualizer)
+
 This repository contains
 
 - `./phonon-web-tools` - a Python package that allows to convert raw QE phonon data into a web-friendly json file.
@@ -9,3 +11,17 @@ This repository contains
 ## Links
 
 - Old version of the tool: https://github.com/materialscloud-org/tools-phonon-dispersion
+
+## Making new releases
+
+- `mc-react-phonon-visualizer`:
+  - Update version, commit and create a tag starting with `js-v`, push to Github.
+    ```bash
+    > cd mc-react-phonon-visualizer
+    > npm version major/minor/patch
+    vX.Y.Z
+    > git add .; git commit -m "Release js-vX.Y.Z"
+    > git tag js-vX.Y.Z -m js-vX.Y.Z
+    > git push --follow-tags
+    ```
+  - A Github action will detect the tag `js-vX.Y.Z` and publish to npm.
