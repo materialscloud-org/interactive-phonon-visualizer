@@ -9,6 +9,11 @@ jobs:
   publish_pypi:
     runs-on: ubuntu-latest
     if: github.repository == 'materialscloud-org/interactive-phonon-visualizer'
+
+    permissions:
+      id-token: write
+      contents: read
+
     defaults:
       run:
         working-directory: phonon-web-tools
