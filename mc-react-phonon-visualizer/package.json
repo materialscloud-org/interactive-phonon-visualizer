@@ -23,13 +23,13 @@
   "scripts": {
     "dev": "vite",
     "start": "npm run dev",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "plotly.js": "^2.33.0",
+    "plotly.js-basic-dist-min": "^3.1.2",
     "react-plotly.js": "^2.6.0",
     "sass": "^1.77.4",
     "weas": "^0.1.38"

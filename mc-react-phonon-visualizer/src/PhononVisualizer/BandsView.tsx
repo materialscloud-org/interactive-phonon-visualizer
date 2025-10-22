@@ -1,8 +1,12 @@
 import { memo, useEffect, useState, useMemo } from "react";
 import { Card } from "react-bootstrap";
-import Plot from "react-plotly.js";
 
-import { PlotDatum, PlotMouseEvent } from "plotly.js";
+import Plotly from "plotly.js-basic-dist-min";
+import createPlotlyComponent from "react-plotly.js/factory";
+
+const Plot = createPlotlyComponent(Plotly);
+
+import { PlotDatum, PlotMouseEvent } from "plotly.js-basic-dist-min";
 import { mergePlotlyFormats, mergePlotlyLayout } from "./utils.ts";
 
 import { HighSymPoint, PlotState } from "./types.ts";

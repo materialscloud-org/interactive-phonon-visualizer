@@ -1,5 +1,5 @@
 import merge from "lodash.merge";
-import { PlotDatum } from "plotly.js";
+import { PlotDatum } from "plotly.js-basic-dist-min";
 
 // merging utils for passed Formats
 export function mergePlotlyFormats(
