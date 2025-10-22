@@ -6,11 +6,13 @@ on:
       - "js-v*"
 
 jobs:
-  release_and_publish:
+  publish_npm:
     runs-on: ubuntu-latest
+    if: github.repository == 'materialscloud-org/interactive-phonon-visualizer'
     defaults:
       run:
         working-directory: mc-react-phonon-visualizer
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

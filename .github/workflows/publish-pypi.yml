@@ -1,0 +1,33 @@
+name: Publish the python lib on PyPI
+
+on:
+  push:
+    tags:
+      - "py-v*"
+
+jobs:
+  publish_pypi:
+    runs-on: ubuntu-latest
+    if: github.repository == 'materialscloud-org/interactive-phonon-visualizer'
+    defaults:
+      run:
+        working-directory: phonon-web-tools
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Install Python
+        run: uv python install
+
+      - run: uv sync --locked
+      - run: uv build
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
