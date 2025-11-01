@@ -23,8 +23,7 @@ This repository contains
     > cd phonon-web-tools
     > uv version --bump [major|minor|patch]
     ... => X.Y.Z
-    > git add .; git commit -m "Release py-vX.Y.Z"
-    > git tag py-vX.Y.Z -m py-vX.Y.Z
+    > TAG="py-vX.Y.Z" && git add . && git commit -m "Release $TAG" && git tag $TAG -m $TAG
     > git push --follow-tags
     ```
   - A Github action will detect the tag `py-vX.Y.Z` and publish to PYPI.
@@ -35,8 +34,7 @@ This repository contains
     > cd mc-react-phonon-visualizer
     > npm version [major|minor|patch]
     vX.Y.Z
-    > git add .; git commit -m "Release js-vX.Y.Z"
-    > git tag js-vX.Y.Z -m js-vX.Y.Z
+    > TAG="js-vX.Y.Z" && git add . && git commit -m "Release $TAG" && git tag $TAG -m $TAG
     > git push --follow-tags
     ```
   - A Github action will detect the tag `js-vX.Y.Z` and publish to npm.
