@@ -7,7 +7,9 @@ import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 import useParameters from "./useParameters";
 
+import MemoizedBandsViewFast from "./BandsViewFast";
 import MemoizedBandsView from "./BandsView";
+
 import CellView from "./CellView";
 import MemoizedControlsPanel from "./ControlsPanel";
 
@@ -26,6 +28,17 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
     [props]
   );
 
+  const bandsProps = {
+    distances: props.distances,
+    highSymPoints: props.highsym_qpts,
+    eigenvalues: props.eigenvalues,
+    updateMode,
+    plotlyLayoutFormat: props.plotlyLayoutFormat,
+    plotlyTraceFormat: props.plotlyTraceFormat,
+    plotlyHoverTraceFormat: props.plotlyHoverTraceFormat,
+    plotlySelectedTraceFormat: props.plotlySelectedTraceFormat,
+  };
+
   return (
     <ParametersContext.Provider value={parameters}>
       <Container fluid>
@@ -37,16 +50,11 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
             <CellView props={props} mode={mode} />
           </Col>
           <Col lg="5" className="visualizer-panel">
-            <MemoizedBandsView
-              distances={props.distances}
-              highSymPoints={props.highsym_qpts}
-              eigenvalues={props.eigenvalues}
-              updateMode={updateMode}
-              plotlyLayoutFormat={props.plotlyLayoutFormat}
-              plotlyTraceFormat={props.plotlyTraceFormat}
-              plotlyHoverTraceFormat={props.plotlyHoverTraceFormat}
-              plotlySelectedTraceFormat={props.plotlySelectedTraceFormat}
-            />
+            {props.fastMode ? (
+              <MemoizedBandsViewFast {...bandsProps} /> // fastmode
+            ) : (
+              <MemoizedBandsView {...bandsProps} /> // default
+            )}
           </Col>
         </Row>
       </Container>
