@@ -12,7 +12,7 @@ from pymatgen.io.cif import CifParser as PMGCifParser
 
 from .lattice import car_red, rec_lat
 from .phonon_web import PhononWebConverter
-from .utils import chem_symbol_to_number
+from .utils import chem_symbol_to_number, normalize_numbers
 
 # Value from qe_tools
 bohr_in_angstrom = 0.52917720859
@@ -393,4 +393,4 @@ def convert_qe_phonon_data(
         **kwargs,
     )
 
-    return phonon_web_converter
+    return normalize_numbers(phonon_web_converter.get_dict())
