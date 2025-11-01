@@ -103,29 +103,27 @@ const BandsViewFast = ({
     );
   }, [eigenvalues]);
 
-  const plotState: PlotState = useMemo(
-    () => ({
-      data: getPlotData(
+  // memo layout between hovers.
+  const layout = useMemo(
+    () =>
+      mergePlotlyLayout(
+        getLayout(highSymPoints, distances, eigenvalues),
+        plotlyLayoutFormat
+      ),
+    [highSymPoints, distances, eigenvalues, plotlyLayoutFormat]
+  );
+
+  const data = useMemo(
+    () =>
+      getPlotData(
         bands,
         distances,
-        null,
+        null, // hoveredPoint handled separately
         selectedPoint,
         plotlyTraceFormat,
         plotlyHoverTraceFormat,
         plotlySelectedTraceFormat
       ),
-      layout: mergePlotlyLayout(
-        getLayout(highSymPoints, distances, eigenvalues),
-        plotlyLayoutFormat
-      ),
-      frames: [],
-      config: {
-        scrollZoom: false,
-        displayModeBar: true,
-        displaylogo: false,
-        modeBarButtons: [["toImage", "resetScale2d"]],
-      },
-    }),
     [
       bands,
       distances,
@@ -133,8 +131,17 @@ const BandsViewFast = ({
       plotlyTraceFormat,
       plotlyHoverTraceFormat,
       plotlySelectedTraceFormat,
-      plotlyLayoutFormat,
     ]
+  );
+
+  const config = useMemo(
+    () => ({
+      scrollZoom: false,
+      displayModeBar: true,
+      displaylogo: false,
+      modeBarButtons: [["toImage", "resetScale2d"]],
+    }),
+    []
   );
 
   // selection is managed by the plotly selection event below (rebuild the whole plot)
@@ -162,9 +169,9 @@ const BandsViewFast = ({
       <Card.Body style={{ position: "relative", height: "420px" }}>
         {/* plotly plot. */}
         <Plot
-          data={plotState.data}
-          layout={plotState.layout}
-          config={plotState.config}
+          data={data}
+          layout={layout}
+          config={config}
           onClick={handleSelection}
           onHover={handleHover}
           onUnhover={handleUnhover}
