@@ -956,7 +956,7 @@ requires-dist = [
     { name = "pymatgen" },
     { name = "pyyaml" },
     { name = "qe-tools", specifier = "~=2.3" },
-    { name = "seekpath", specifier = "~=2.1" },
+    { name = "seekpath", specifier = ">=1.0" },
 ]
 
 [[package]]

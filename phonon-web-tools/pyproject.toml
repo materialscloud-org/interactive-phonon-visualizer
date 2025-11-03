@@ -9,7 +9,7 @@ dependencies = [
   "ase~=3.26",
   "pymatgen",
   "qe-tools~=2.3",
-  "seekpath~=2.1",
+  "seekpath>=1.0",
 ]
 
 [project.scripts]
