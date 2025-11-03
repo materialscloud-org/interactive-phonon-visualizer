@@ -146,6 +146,25 @@ const CellView = ({
     vectorLength,
   ]);
 
+  // Track last applied camera to avoid unnecessary updates
+  const lastCameraDirection = useRef(cameraDirection);
+
+  useEffect(() => {
+    if (!weasRef.current) return;
+
+    const cameraChanged =
+      cameraDirection[0] !== lastCameraDirection.current[0] ||
+      cameraDirection[1] !== lastCameraDirection.current[1] ||
+      cameraDirection[2] !== lastCameraDirection.current[2];
+
+    if (cameraChanged) {
+      weasRef.current.avr.tjs.updateCameraAndControls({
+        direction: cameraDirection,
+      });
+      lastCameraDirection.current = cameraDirection;
+    }
+  }, [cameraDirection]);
+
   const togglePlay = () => {
     if (weasRef.current) {
       if (weasRef.current.avr.isPlaying) {
