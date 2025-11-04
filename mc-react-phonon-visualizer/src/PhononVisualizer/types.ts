@@ -18,6 +18,7 @@ export interface VisualizerProps {
   distances: number[];
   highsym_qpts: HighSymPoint[];
   vectors: number[][][][][];
+  fastMode: boolean;
 
   // general appearance overrides.
   plotlyLayoutFormat?: Partial<Plotly.Layout>;
