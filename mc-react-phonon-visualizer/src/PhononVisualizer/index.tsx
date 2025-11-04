@@ -18,6 +18,7 @@ import "./PhononVisualizer.scss";
 const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
   const parameters = useParameters(props.repetitions);
   const [mode, setMode] = useState<number[]>([0, 0]);
+  const { fastMode = true } = props;
 
   const updateMode = useCallback(
     (event: PlotMouseEvent) => {
@@ -50,7 +51,7 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
             <CellView props={props} mode={mode} />
           </Col>
           <Col lg="5" className="visualizer-panel">
-            {props.fastMode ? (
+            {fastMode ? (
               <MemoizedBandsViewFast {...bandsProps} /> // fastmode
             ) : (
               <MemoizedBandsView {...bandsProps} /> // default

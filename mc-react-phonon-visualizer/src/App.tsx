@@ -8,14 +8,7 @@ function App() {
   return (
     <div>
       {/* Pass as any to avoid ts problems. */}
-      <PhononVisualizer
-        props={{ title: "Demo", fastMode: false, ...data } as any}
-      />
-
-      {/* Pass as any to avoid ts problems. */}
-      <PhononVisualizer
-        props={{ title: "Demo", fastMode: true, ...data } as any}
-      />
+      <PhononVisualizer props={{ title: "Demo", ...data } as any} />
     </div>
   );
 }
