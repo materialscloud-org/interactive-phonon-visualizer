@@ -46,6 +46,7 @@ const CellView = ({
     vectorLength,
     showVectors,
     speed,
+    atomScale,
     // isAnimated,
   } = useContext(ParametersContext);
 
@@ -63,7 +64,7 @@ const CellView = ({
       });
       weasInstance.avr.modelStyle = 1;
       weasInstance.avr.bondedAtoms = true;
-      weasInstance.avr.atomScale = 0.1;
+      weasInstance.avr.atomScale = atomScale;
       weasInstance.avr.bondManager.hideLongBonds = false;
       weasRef.current = weasInstance;
     }
@@ -83,19 +84,6 @@ const CellView = ({
       positions: props.atom_pos_car,
       cell: props.lattice,
     });
-
-    if (!weasRef.current) {
-      const weasInstance = new WEAS({
-        domElement: viewerRef.current,
-        guiConfig: defaultGuiConfig,
-        viewerConfig: { backgroundColor: "#0000FF" },
-      });
-      weasInstance.avr.modelStyle = 1;
-      weasInstance.avr.bondedAtoms = true;
-      weasInstance.avr.atomScale = 0.1;
-      weasInstance.avr.bondManager.hideLongBonds = false;
-      weasRef.current = weasInstance;
-    }
 
     weas.clear();
     weas.avr.fromPhononMode({
@@ -130,6 +118,12 @@ const CellView = ({
 
     weas.avr.showCell = showCell;
     weas.avr.VFManager.show = showVectors;
+
+    weas.avr.atomScale = atomScale;
+    // for reasons unknown i have to hook into each entry in _atomScales...
+    for (let i = 0; i < weas.avr._atomScales.length; i++) {
+      weas.avr._atomScales[i] = atomScale;
+    }
     weas.avr.drawModels();
     weas.render();
   }, [
@@ -144,6 +138,7 @@ const CellView = ({
     ny,
     nz,
     vectorLength,
+    atomScale,
   ]);
 
   // Track last applied camera to avoid unnecessary updates

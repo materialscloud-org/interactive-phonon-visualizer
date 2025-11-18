@@ -8,9 +8,10 @@ const useParameters = (repetitions: number[]) => {
   const [cameraDirection, setCameraDirection] = useState([0, 0, 1]);
   const [showCell, setShowCell] = useState(true);
   const [amplitude, setAmplitude] = useState(0.3);
-  const [vectorLength, setVectorLength] = useState(1.5);
+  const [vectorLength, setVectorLength] = useState(2.5);
   const [showVectors, setShowVectors] = useState(true);
   const [speed, setSpeed] = useState(0.25);
+  const [atomScale, setAtomScale] = useState(0.5);
 
   return {
     nx,
@@ -31,6 +32,8 @@ const useParameters = (repetitions: number[]) => {
     setShowVectors,
     speed,
     setSpeed,
+    atomScale,
+    setAtomScale,
   };
 };
 

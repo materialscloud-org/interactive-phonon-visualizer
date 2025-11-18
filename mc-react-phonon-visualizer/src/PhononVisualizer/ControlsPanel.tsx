@@ -24,6 +24,8 @@ const ControlsPanel = () => {
     setShowVectors,
     speed,
     setSpeed,
+    atomScale,
+    setAtomScale,
   } = useContext(ParametersContext);
 
   const updateCellRepetitions = (event: React.FormEvent<HTMLFormElement>) => {
@@ -100,6 +102,10 @@ const ControlsPanel = () => {
 
   const updateSpeed = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSpeed(parseFloat(event.target.value));
+  };
+
+  const updateAtomScale = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAtomScale(parseFloat(event.target.value));
   };
 
   return (
@@ -235,6 +241,18 @@ const ControlsPanel = () => {
                 step="0.01"
                 defaultValue={speed}
                 onChange={updateSpeed}
+              />
+            </Col>
+          </Form.Group>
+          <Form.Group as={Row} className="controls-group">
+            <Form.Label>Atom scale</Form.Label>
+            <Col xs="8">
+              <Form.Range
+                min="0.01"
+                max="2"
+                step="0.01"
+                defaultValue={atomScale}
+                onChange={updateAtomScale}
               />
             </Col>
           </Form.Group>
