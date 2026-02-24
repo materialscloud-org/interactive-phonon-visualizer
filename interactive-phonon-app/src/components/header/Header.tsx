@@ -6,7 +6,7 @@ import { DoiBadge } from "mc-react-library";
 import HeaderProps from "./Header.models";
 import styles from "./Header.module.scss";
 
-const Header: React.FC<HeaderProps> = ({ title, subtitle, logo }) => (
+const Header: React.FC<HeaderProps> = ({ title, subtitle, doi_ids, logo }) => (
   <Card id={styles.headerCard}>
     <Card.Body id={styles.headerCardBody}>
       <div id={styles.titleAndLogo}>
@@ -19,7 +19,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, logo }) => (
             ))}
           </div>
         </div>
-        <img id={styles.logo} src={logo} alt="SSSP logo" />
+        <img id={styles.logo} src={logo} alt="IPV logo" />
       </div>
     </Card.Body>
   </Card>

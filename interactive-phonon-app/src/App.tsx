@@ -24,7 +24,7 @@ function App() {
   }, [currentTab]);
 
   return (
-    <div>
+    <div style={{ padding: "0px" }}>
       <MaterialsCloudHeader
         activeSection={"work"}
         breadcrumbsPath={[
@@ -36,35 +36,36 @@ function App() {
           },
         ]}
       />
-      <Container fluid="xxl">
+      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
         <Header
           title={"Interactive Phonon"}
           subtitle={
             "A tool for the interactive visualization and inspection of lattice vibrations."
           }
           doi_ids={[]}
+          logo={"./interactivephonon.png"}
         />
-      </Container>
 
-      <Container fluid="xxl" style={{ background: "white", padding: "0px" }}>
-        <Tabs
-          activeKey={currentTab}
-          onSelect={(key) => {
-            setCurrentTab(key || "phonons");
-            setFocusSection(null);
-          }}
-        >
-          <Tab eventKey="phonons" title="Phonons">
-            <PhononsPanel aboutLinkHandler={showAboutSection} />
-          </Tab>
-          <Tab eventKey="about" title="About">
-            <AboutPanel focusSection={focusSection} />
-          </Tab>
-          <Tab eventKey="acknowledge" title="Acknowledgements">
-            <AcknowledgePanel />
-          </Tab>
-        </Tabs>
-      </Container>
+        <Container fluid="xxl" style={{ padding: "0px" }}>
+          <Tabs
+            activeKey={currentTab}
+            onSelect={(key) => {
+              setCurrentTab(key || "phonons");
+              setFocusSection(null);
+            }}
+          >
+            <Tab eventKey="phonons" title="Phonons">
+              <PhononsPanel aboutLinkHandler={showAboutSection} />
+            </Tab>
+            <Tab eventKey="about" title="About">
+              <AboutPanel focusSection={focusSection} />
+            </Tab>
+            <Tab eventKey="acknowledge" title="Acknowledgements">
+              <AcknowledgePanel />
+            </Tab>
+          </Tabs>
+        </Container>
+      </div>
     </div>
   );
 }

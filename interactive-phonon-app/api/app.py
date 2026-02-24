@@ -1,51 +1,56 @@
-import json
-from pathlib import Path
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from phonon_web_tools import convert_qe_phonon_data
+from typing import List
+import io
 
-import yaml
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+app = FastAPI()
 
-app = Flask(__name__)
+# Enable CORS for frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-CORS(app)
-
-root = Path(__file__).resolve().parent.parent
-config_file_path = Path("config.yaml")
-
-try:
-    with config_file_path.open() as config_file:
-        config = yaml.safe_load(config_file)
-        data_path: str = config["data_folder"]
-        data_folder = root / data_path
-except IOError as exc:
-    if exc.errno == 2:
-        config = {}
-        data_folder = None
-    else:
-        raise
-
-
-# NOTE: Not used any more, examples loaded directly from public/data!
-@app.route("/process_example", methods=["POST"])
-def process_example():
-    payload = request.json
-    if "example" not in payload:
-        return jsonify({"error": "example field is required"}), 400
-    example = payload["example"]
-
+@app.post("/convert_phonons")
+async def convert_phonons(
+    pw_input_file: UploadFile = File(...),
+    pw_output_file: UploadFile = File(...),
+    matdyn_file: UploadFile = File(...),
+):
+    """
+    Accept Quantum ESPRESSO phonon files:
+      - pw_input_file: aiida.in
+      - pw_output_file: aiida.out
+      - matdyn_file: phonon_displacements.dat
+    Converts them to a JSON-ready phonon dictionary.
+    """
     try:
-        if not config:
-            raise ValueError("config file not found")
-        title = config["data"][example]["title"]
-        if not data_folder:
-            raise ValueError("data folder not found")
-        filename: str = config["data"][example]["filename"]
-        with (data_folder / filename).open() as structure_file:
-            data = json.load(structure_file)
-    except (KeyError, ValueError) as exc:
-        return jsonify({"error": str(exc)}), 400
-    return jsonify({"title": title, **data})
+        # Read bytes
+        f1_bytes = await pw_input_file.read()
+        f2_bytes = await pw_output_file.read()
+        f3_bytes = await matdyn_file.read()
 
+        # Convert to string safely (replace non-UTF-8 characters)
+        f1_text = f1_bytes.decode(errors="replace")
+        f2_text = f2_bytes.decode(errors="replace")
+        f3_text = f3_bytes.decode(errors="replace")
 
-if __name__ == "__main__":
-    app.run(debug=True)
+        # Wrap in StringIO (text-based file-like object)
+        f1_stream = io.StringIO(f1_text)
+        f2_stream = io.StringIO(f2_text)
+        f3_stream = io.StringIO(f3_text)
+
+        phonon_data = convert_qe_phonon_data(
+            f1_stream,
+            f2_stream,
+            f3_stream,
+        )   
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # log full traceback
+        raise HTTPException(status_code=500, detail=f"Conversion pipeline failed: {str(e)}")
+
+    return phonon_data
