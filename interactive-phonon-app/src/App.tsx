@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tab, Tabs } from "react-bootstrap";
+import { Container, Tab, Tabs } from "react-bootstrap";
 
 import AboutPanel from "./components/about/AboutPanel";
 import AcknowledgePanel from "./components/acknowledge/AcknowledgePanel";
@@ -8,6 +8,7 @@ import PhononsPanel from "./components/phonons/PhononsPanel";
 import MaterialsCloudHeader from "mc-react-header";
 
 import "./App.scss";
+import { Header } from "./components/header";
 
 function App() {
   const [currentTab, setCurrentTab] = useState("phonons");
@@ -35,7 +36,17 @@ function App() {
           },
         ]}
       />
-      <div style={{ margin: "1em" }}>
+      <Container fluid="xxl">
+        <Header
+          title={"Interactive Phonon"}
+          subtitle={
+            "A tool for the interactive visualization and inspection of lattice vibrations."
+          }
+          doi_ids={[]}
+        />
+      </Container>
+
+      <Container fluid="xxl" style={{ background: "white", padding: "0px" }}>
         <Tabs
           activeKey={currentTab}
           onSelect={(key) => {
@@ -53,7 +64,7 @@ function App() {
             <AcknowledgePanel />
           </Tab>
         </Tabs>
-      </div>
+      </Container>
     </div>
   );
 }

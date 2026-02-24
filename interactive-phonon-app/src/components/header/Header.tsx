@@ -1,0 +1,28 @@
+import React from "react";
+import { Card } from "react-bootstrap";
+
+import { DoiBadge } from "mc-react-library";
+
+import HeaderProps from "./Header.models";
+import styles from "./Header.module.scss";
+
+const Header: React.FC<HeaderProps> = ({ title, subtitle, logo }) => (
+  <Card id={styles.headerCard}>
+    <Card.Body id={styles.headerCardBody}>
+      <div id={styles.titleAndLogo}>
+        <div id={styles.titleAndDoi}>
+          <div id={styles.title}>{title}</div>
+          <div id={styles.subtitle}>{subtitle}</div>
+          <div id={styles.doiContainer}>
+            {doi_ids.map((doi_id: string) => (
+              <DoiBadge doi_id={doi_id} key={doi_id} />
+            ))}
+          </div>
+        </div>
+        <img id={styles.logo} src={logo} alt="SSSP logo" />
+      </div>
+    </Card.Body>
+  </Card>
+);
+
+export default Header;
