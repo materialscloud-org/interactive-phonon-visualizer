@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Form, Row, Col, Button, Card } from "react-bootstrap";
 import axios from "axios";
 import { VisualizerProps } from "./interfaces";
@@ -13,87 +13,57 @@ const PhononsPanel = ({
 }) => {
   const [visualizerProps, setVisualizerProps] =
     useState<VisualizerProps | null>(null);
-  const [inputFormat, setInputFormat] = useState("Quantum ESPRESSO");
-  const [fileLabels, setFileLabels] = useState([
-    { id: "scfInput", text: "SCF pw.x input" },
-    { id: "scfOutput", text: "SCF pw.x output" },
-    { id: "matdynModes", text: "matdyn.modes" },
-  ]);
 
-  const handleFormatChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const format = event.target.value;
-    setInputFormat(format);
-    if (format === "Quantum ESPRESSO") {
-      setFileLabels([
-        { id: "scfInput", text: "SCF pw.x input" },
-        { id: "scfOutput", text: "SCF pw.x output" },
-        { id: "matdynModes", text: "matdyn.modes" },
-      ]);
-    } else {
-      setFileLabels([{ id: "phononVisJson", text: "Visualizer JSON" }]);
+  // Load result from searchParams if present
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const resultId = params.get("result_id");
+    if (resultId) {
+      axios
+        .get(`${API_ROOT}/results/${resultId}`)
+        .then((res) => setVisualizerProps(res.data))
+        .catch((err) => console.error("Failed to load result:", err));
     }
-  };
-
-  const getExampleData = async (name: string) => {
-    try {
-      const response = await axios.get(`/data/${name}.json`);
-      return response.data;
-    } catch (err) {
-      console.error("Failed to fetch example:", err);
-      return null;
-    }
-  };
+  }, []);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
       const form = event.currentTarget;
+      if (form.id !== "fileForm") return;
 
-      // Example selection
-      if (form.id === "exampleForm") {
-        const select = form.querySelector("select");
-        if (!select?.value) return;
-        const result = await getExampleData(select.value);
-        setVisualizerProps(result);
-        return;
-      }
+      const files = ["pw_input_file", "pw_output_file", "matdyn_file"].map(
+        (id) => (form.querySelector(`#${id}`) as HTMLInputElement)?.files?.[0],
+      );
 
-      // File upload
-      if (form.id === "fileForm") {
-        if (inputFormat === "Quantum ESPRESSO") {
-          const files = fileLabels.map(
-            (label) =>
-              (form.querySelector(`#${label.id}`) as HTMLInputElement)
-                ?.files?.[0],
-          );
-          if (files.some((f) => !f))
-            throw new Error("All files must be selected");
+      if (files.some((f) => !f)) throw new Error("All files must be selected");
 
-          const formData = new FormData();
-          formData.append("pw_input_file", files[0]!);
-          formData.append("pw_output_file", files[1]!);
-          formData.append("matdyn_file", files[2]!);
+      const formData = new FormData();
+      formData.append("pw_input_file", files[0]!);
+      formData.append("pw_output_file", files[1]!);
+      formData.append("matdyn_file", files[2]!);
 
-          try {
-            const response = await axios.post(
-              `${API_ROOT}/convert_phonons`,
-              formData,
-            );
-            setVisualizerProps(response.data);
-          } catch (err) {
-            console.error(err);
-          }
-        } else if (inputFormat === "PhononVis") {
-          const fileInput = form.querySelector(
-            `#${fileLabels[0].id}`,
-          ) as HTMLInputElement;
-          if (!fileInput?.files?.[0]) return;
-          const text = await fileInput.files[0].text();
-          setVisualizerProps(JSON.parse(text));
-        }
+      try {
+        const response = await axios.post(
+          `${API_ROOT}/convert_phonons`,
+          formData,
+        );
+        const resultId = response.data.result_id;
+
+        // Update URL with the short result ID
+        const params = new URLSearchParams(window.location.search);
+        params.set("result_id", resultId);
+        window.history.replaceState({}, "", `?${params.toString()}`);
+
+        // Load visualizer
+        axios
+          .get(`${API_ROOT}/results/${resultId}`)
+          .then((res) => setVisualizerProps(res.data));
+      } catch (err) {
+        console.error(err);
       }
     },
-    [inputFormat, fileLabels],
+    [],
   );
 
   if (visualizerProps) {
@@ -107,59 +77,24 @@ const PhononsPanel = ({
 
   return (
     <Row className="g-4">
-      {/* File Upload Card */}
       <Col xxl={6}>
         <Card>
           <Card.Header>Upload your files</Card.Header>
           <Card.Body>
             <Form id="fileForm" onSubmit={handleSubmit}>
-              <Form.Label>Input format</Form.Label>
-              <Form.Select
-                onChange={handleFormatChange}
-                value={inputFormat}
-                className="mb-3"
-              >
-                <option>Quantum ESPRESSO</option>
-                <option>PhononVis</option>
-              </Form.Select>
-
-              {fileLabels.map((label) => (
-                <Form.Group key={label.id} className="mb-2">
-                  <Form.Label>{label.text}</Form.Label>
-                  <Form.Control type="file" id={label.id} />
-                </Form.Group>
-              ))}
-
+              <Form.Group className="mb-2">
+                <Form.Label>SCF pw.x input</Form.Label>
+                <Form.Control type="file" id="pw_input_file" />
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>SCF pw.x output</Form.Label>
+                <Form.Control type="file" id="pw_output_file" />
+              </Form.Group>
+              <Form.Group className="mb-2">
+                <Form.Label>matdyn.modes</Form.Label>
+                <Form.Control type="file" id="matdyn_file" />
+              </Form.Group>
               <Button type="submit">Calculate phonon dispersion</Button>
-            </Form>
-          </Card.Body>
-        </Card>
-      </Col>
-
-      {/* Example Card */}
-      <Col xxl={6}>
-        <Card>
-          <Card.Header>Pick an example</Card.Header>
-          <Card.Body>
-            <Form id="exampleForm" onSubmit={handleSubmit}>
-              <Row className="align-items-end">
-                <Col md="8">
-                  <Form.Select id="exampleSelector">
-                    <option value="">-- Select an example --</option>
-                    <option value="Bi">Bi (2D)</option>
-                    <option value="BN">BN (2D)</option>
-                    <option value="graphene">C (graphene) (2D)</option>
-                    <option value="PbI2">PbI₂ (2D)</option>
-                    <option value="MoS2">MoS₂ (2D)</option>
-                    <option value="PbTe">PbTe (2D)</option>
-                    <option value="AgNO2">AgNO₂ (2D)</option>
-                    <option value="BaTiO3">BaTiO₃ (3D)</option>
-                  </Form.Select>
-                </Col>
-                <Col md="4">
-                  <Button type="submit">Calculate</Button>
-                </Col>
-              </Row>
             </Form>
           </Card.Body>
         </Card>

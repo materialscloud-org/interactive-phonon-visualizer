@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from phonon_web_tools import convert_qe_phonon_data
 from typing import List
 import io
+import uuid
 
 app = FastAPI()
 
@@ -13,6 +14,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# In-memory store
+RESULTS_STORE: dict[str, dict] = {}
+
+@app.get("/results/{result_id}")
+async def get_result(result_id: str):
+    print(RESULTS_STORE)
+    if result_id not in RESULTS_STORE:
+        return {"error": "Result not found"}
+    return RESULTS_STORE[result_id]
 
 @app.post("/convert_phonons")
 async def convert_phonons(
@@ -53,4 +64,10 @@ async def convert_phonons(
         traceback.print_exc()  # log full traceback
         raise HTTPException(status_code=500, detail=f"Conversion pipeline failed: {str(e)}")
 
-    return phonon_data
+    # store result in memory
+    result_id = str(uuid.uuid4())
+    RESULTS_STORE[result_id] = phonon_data
+
+
+    # pass the result to the front frontend so it can be fetched
+    return {"result_id": result_id}
