@@ -46,7 +46,10 @@ function App() {
           logo={"./interactivephonon.png"}
         />
 
-        <Container fluid="xxl" style={{ padding: "0px 0px 25px 0px" }}>
+        <Container
+          fluid="xxl"
+          style={{ padding: "0px 0px 25px 0px", maxWidth: "1350px" }}
+        >
           <Tabs
             activeKey={currentTab}
             onSelect={(key) => {

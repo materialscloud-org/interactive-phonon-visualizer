@@ -2,8 +2,6 @@ import { useEffect } from "react";
 
 import ScrollToTopButton from "../common/scroll/ScrollToTopButton";
 
-import "./AboutPanel.scss";
-
 const AboutPanel = ({ focusSection }: { focusSection: string | null }) => {
   useEffect(() => {
     const section = document.getElementById(focusSection || "");
@@ -102,9 +100,9 @@ ATOMIC_SPECIES
         {/* TODO Add link to local data (maybe fetched data?) */}
         <p>
           Download example files for{" "}
-          <b>
+          <strong>
             cubic BaTiO<sub>3</sub>
-          </b>{" "}
+          </strong>{" "}
           <a href="">here</a>.
         </p>
         <hr />
@@ -146,20 +144,20 @@ vectors:          eigenvectors (Nq x Nphonons x Natoms x 3 x 2) They are, more r
           <code>
             {`
 {
-  "distances": [0, 0.004591723543957549, ...., 0.25105661898056153],
-  "natoms": 2,
-  "vectors": [[[[[0.704604, 0.0], [0.059344, 0.0], [-0.003418, 0.0]], [[0.704604, 0.0], [0.059344, 0.0], [-0.003418, 0.0]]] , ..., [[0.298964, 0.0], [-0.640797, 0.0], [0.0, 0.0]]]]],
-  "name": "Graphene",
-  "eigenvalues": [[-6.2e-05, -4.3e-05, -3e-05, 911.740895, 1604.085116, 1604.085116], ...., [1604.085116, -4.3e-05, 911.740895, -3e-05, -6.2e-05, 1604.085116]],
-  "repetitions": [3, 3, 3],
-  "qpoints": [[0.0, 0.0, 0.0], ..., [0.0, 0.0, 0.0]],
-  "atom_numbers": [6, 6],
-  "lattice": [[2.433055638800606, 0.0, 0.0], [-1.216527819400303, 2.1070879920223002, 0.0], [0.0, 0.0, 6.350126987977594]],
-  "highsym_qpts": [[0, ""], [20, ""], [30, ""], [50, ""]],
-  "atom_pos_car": [[0.0, 0.0, 0.0], [1.2165278194002909, 0.7023626640074263, 0.0]],
-  "atom_pos_red": [[0.0, 0.0, 0.0], [0.66666666666666, 0.33333333333333, 0.0]],
-  "formula": "C2",
-  "atom_types": ["C", "C"]
+ "distances": [0, 0.004591723543957549, ...., 0.25105661898056153],
+ "natoms": 2,
+ "vectors": [[[[[0.70, 0.0], [0.05, 0.0], [-0.00, 0.0]], [[0.70, 0.0], [0.059, 0.0], [-0.00, 0.0]]] , ..., [[0.29, 0.0], [-0.64, 0.0], [0.0, 0.0]]]]],
+ "name": "Graphene",
+ "eigenvalues": [[-6.2e-05, -4.3e-05, -3e-05, 911.740, 1604.085, 1604.085], ...., [1604.085, -4.3e-05, 911.740, -3e-05, -6.2e-05, 1604.085]],
+ "repetitions": [3, 3, 3],
+ "qpoints": [[0.0, 0.0, 0.0], ..., [0.0, 0.0, 0.0]],
+ "atom_numbers": [6, 6],
+ "lattice": [[2.433055638800606, 0.0, 0.0], [-1.216527819400303, 2.1070879920223002, 0.0], [0.0, 0.0, 6.350126987977594]],
+ "highsym_qpts": [[0, ""], [20, ""], [30, ""], [50, ""]],
+ "atom_pos_car": [[0.0, 0.0, 0.0], [1.2165278194002909, 0.7023626640074263, 0.0]],
+ "atom_pos_red": [[0.0, 0.0, 0.0], [0.66666666666666, 0.33333333333333, 0.0]],
+ "formula": "C2",
+ "atom_types": ["C", "C"]
 }
   `.trim()}
           </code>
