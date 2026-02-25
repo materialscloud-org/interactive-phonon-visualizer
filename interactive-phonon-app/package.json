@@ -15,8 +15,8 @@
   "dependencies": {
     "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
-    "mc-react-header": "^0.4.3",
-    "mc-react-library": "^0.3.0",
+    "mc-react-header": "^0.4.5",
+    "mc-react-library": "^0.5.0",
     "mc-react-phonon-visualizer": "file:../mc-react-phonon-visualizer",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",

@@ -4,30 +4,81 @@
   }
 }
 
+body {
+  background: aliceblue;
+}
+
+// page structure
+h1 {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+h2 {
+  font-size: 1.25rem;
+  font-weight: 400;
+}
+h3 {
+  font-size: 1.125rem;
+  font-weight: 400;
+}
+h4 {
+  font-size: 15px;
+}
+
+p {
+  padding: 0 0.5rem;
+  text-align: justify;
+  margin-bottom: 0.5rem;
+}
+
+pre {
+  margin: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid rgb(237, 237, 237);
+  border-radius: 4px;
+  background: whitesmoke;
+}
+
+pre code {
+  font-size: 0.87rem;
+}
+
+strong {
+  font-weight: 600;
+}
+
+.card {
+  border: 0;
+  .card-body {
+    padding: 18px;
+    border: 1px solid #d2d2d2;
+    border-top: 0;
+    box-shadow: var(--bs-box-shadow-sm);
+  }
+}
+
 /* overload boostrap tab style */
 .nav-tabs {
   .nav-link {
+    border-top: 1px solid #ddd !important;
+    border-left: 1px solid #ddd !important;
+    border-right: 1px solid #ddd !important;
     color: grey;
     background-color: whitesmoke;
-    border: 1px solid #ddd !important;
-    border-bottom-color: #999 !important;
+    a {
+      text-decoration: none;
+    }
 
     &:hover {
       color: #4682b4;
-    }
-
-    &.active {
-      border-top: 1px solid #999 !important;
-      border-left: 1px solid #999 !important;
-      border-right: 1px solid #999 !important;
-      border-bottom: 1px solid white !important;
     }
   }
 }
 
 .tab-content {
+  background-color: white;
   margin-top: -1px;
-  border: 1px solid #999 !important;
+  border: 1px solid #ddd !important;
   box-shadow: var(--bs-box-shadow);
   padding: 1.5em;
 }

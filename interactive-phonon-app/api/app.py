@@ -1,51 +1,61 @@
-import json
-from pathlib import Path
+from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from phonon_web_tools import convert_qe_phonon_data
+import io
+import uuid
+from diskcache import Cache
 
-import yaml
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+app = FastAPI()
 
-app = Flask(__name__)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-CORS(app)
+# 2GB disk-backed LRU cache
+cache = Cache(
+    "./phonon_cache",
+    size_limit=2 * 1024 * 1024 * 1024  # 2 GB
+)
 
-root = Path(__file__).resolve().parent.parent
-config_file_path = Path("config.yaml")
-
-try:
-    with config_file_path.open() as config_file:
-        config = yaml.safe_load(config_file)
-        data_path: str = config["data_folder"]
-        data_folder = root / data_path
-except IOError as exc:
-    if exc.errno == 2:
-        config = {}
-        data_folder = None
-    else:
-        raise
+@app.get("/results/{result_id}")
+async def get_result(result_id: str):
+    result = cache.get(result_id)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Result not found")
+    return result
 
 
-# NOTE: Not used any more, examples loaded directly from public/data!
-@app.route("/process_example", methods=["POST"])
-def process_example():
-    payload = request.json
-    if "example" not in payload:
-        return jsonify({"error": "example field is required"}), 400
-    example = payload["example"]
-
+@app.post("/convert_phonons")
+async def convert_phonons(
+    pw_input_file: UploadFile = File(...),
+    pw_output_file: UploadFile = File(...),
+    matdyn_file: UploadFile = File(...),
+):
     try:
-        if not config:
-            raise ValueError("config file not found")
-        title = config["data"][example]["title"]
-        if not data_folder:
-            raise ValueError("data folder not found")
-        filename: str = config["data"][example]["filename"]
-        with (data_folder / filename).open() as structure_file:
-            data = json.load(structure_file)
-    except (KeyError, ValueError) as exc:
-        return jsonify({"error": str(exc)}), 400
-    return jsonify({"title": title, **data})
+        f1_text = (await pw_input_file.read()).decode(errors="replace")
+        f2_text = (await pw_output_file.read()).decode(errors="replace")
+        f3_text = (await matdyn_file.read()).decode(errors="replace")
 
+        phonon_data = convert_qe_phonon_data(
+            io.StringIO(f1_text),
+            io.StringIO(f2_text),
+            io.StringIO(f3_text),
+        )
 
-if __name__ == "__main__":
-    app.run(debug=True)
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Conversion pipeline failed: {str(e)}"
+        )
+
+    # cache by first part of uuid
+    result_id = str(uuid.uuid4()).split("-")[0]
+    
+    # Store in disk LRU cache
+    cache.set(result_id, phonon_data)
+
+    # pass the result to the front frontend so it can be fetched
+    return {"result_id": result_id}

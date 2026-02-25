@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Tab, Tabs } from "react-bootstrap";
+import { Container, Tab, Tabs } from "react-bootstrap";
 
 import AboutPanel from "./components/about/AboutPanel";
 import AcknowledgePanel from "./components/acknowledge/AcknowledgePanel";
@@ -8,6 +8,7 @@ import PhononsPanel from "./components/phonons/PhononsPanel";
 import MaterialsCloudHeader from "mc-react-header";
 
 import "./App.scss";
+import { Header } from "./components/header";
 
 function App() {
   const [currentTab, setCurrentTab] = useState("phonons");
@@ -23,7 +24,7 @@ function App() {
   }, [currentTab]);
 
   return (
-    <div>
+    <div style={{ padding: "0px" }}>
       <MaterialsCloudHeader
         activeSection={"work"}
         breadcrumbsPath={[
@@ -35,24 +36,38 @@ function App() {
           },
         ]}
       />
-      <div style={{ margin: "1em" }}>
-        <Tabs
-          activeKey={currentTab}
-          onSelect={(key) => {
-            setCurrentTab(key || "phonons");
-            setFocusSection(null);
-          }}
+      <div style={{ maxWidth: "1350px", margin: "0 auto" }}>
+        <Header
+          title={"Interactive Phonon"}
+          subtitle={
+            "A tool for the interactive visualization and inspection of lattice vibrations."
+          }
+          doi_ids={[]}
+          logo={"./interactivephonon.png"}
+        />
+
+        <Container
+          fluid="xxl"
+          style={{ padding: "0px 0px 25px 0px", maxWidth: "1350px" }}
         >
-          <Tab eventKey="phonons" title="Phonons">
-            <PhononsPanel aboutLinkHandler={showAboutSection} />
-          </Tab>
-          <Tab eventKey="about" title="About">
-            <AboutPanel focusSection={focusSection} />
-          </Tab>
-          <Tab eventKey="acknowledge" title="Acknowledgements">
-            <AcknowledgePanel />
-          </Tab>
-        </Tabs>
+          <Tabs
+            activeKey={currentTab}
+            onSelect={(key) => {
+              setCurrentTab(key || "phonons");
+              setFocusSection(null);
+            }}
+          >
+            <Tab eventKey="phonons" title="Phonons">
+              <PhononsPanel aboutLinkHandler={showAboutSection} />
+            </Tab>
+            <Tab eventKey="about" title="About">
+              <AboutPanel focusSection={focusSection} />
+            </Tab>
+            <Tab eventKey="acknowledge" title="Acknowledgements">
+              <AcknowledgePanel />
+            </Tab>
+          </Tabs>
+        </Container>
       </div>
     </div>
   );
