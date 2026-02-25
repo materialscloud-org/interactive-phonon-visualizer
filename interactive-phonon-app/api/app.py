@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from phonon_web_tools import convert_qe_phonon_data
 import io
@@ -59,3 +60,7 @@ async def convert_phonons(
 
     # pass the result to the front frontend so it can be fetched
     return {"result_id": result_id}
+
+
+# Mount the frontend last to make sure you dont overwrite other routes
+app.mount("/", StaticFiles(directory="./frontend/dist", html=True), name="frontend")

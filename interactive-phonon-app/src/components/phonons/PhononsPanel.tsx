@@ -5,7 +5,7 @@ import { VisualizerProps } from "./interfaces";
 import VisualizerPanel from "./VisualizerPanel";
 
 // Move to env variable.
-const API_ROOT = "http://localhost:8000";
+const API_ROOT = "";
 
 const PhononsPanel = ({
   aboutLinkHandler,
