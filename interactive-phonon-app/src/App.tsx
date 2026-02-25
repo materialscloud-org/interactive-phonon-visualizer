@@ -36,7 +36,7 @@ function App() {
           },
         ]}
       />
-      <div style={{ maxWidth: "1400px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1350px", margin: "0 auto" }}>
         <Header
           title={"Interactive Phonon"}
           subtitle={
@@ -46,7 +46,7 @@ function App() {
           logo={"./interactivephonon.png"}
         />
 
-        <Container fluid="xxl" style={{ padding: "0px" }}>
+        <Container fluid="xxl" style={{ padding: "0px 0px 25px 0px" }}>
           <Tabs
             activeKey={currentTab}
             onSelect={(key) => {

@@ -11,7 +11,7 @@ const Header: React.FC<HeaderProps> = ({ title, subtitle, doi_ids, logo }) => (
     <Card.Body id={styles.headerCardBody}>
       <div id={styles.titleAndLogo}>
         <div id={styles.titleAndDoi}>
-          <div id={styles.title}>{title}</div>
+          <h1 id={styles.title}>{title}</h1>
           <div id={styles.subtitle}>{subtitle}</div>
           <div id={styles.doiContainer}>
             {doi_ids.map((doi_id: string) => (
