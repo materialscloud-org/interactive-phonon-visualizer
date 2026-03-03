@@ -21,4 +21,13 @@ docker run -p 85:8000 interactive-phonon-app
 
 
 ### Pushing new images to harbor
+```
+TAG=$(date +%Y.%m.%d-%H%M%S)
+IMAGE=harbor.materialscloud.cscs.ch/materialscloud/interactive-phonon-visualiser
 
+docker build -t $IMAGE:latest .
+docker push $IMAGE:latest
+docker tag $IMAGE:latest $IMAGE:$TAG
+docker push $IMAGE:$TAG
+
+```
