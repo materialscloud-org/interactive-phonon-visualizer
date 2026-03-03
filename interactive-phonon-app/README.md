@@ -14,9 +14,11 @@ This repository houses the Materials Cloud interactive phonons visualizer React 
 ### Build the docker image
 
 ```
-rm -rf  public/data # remove symlinks
-cp -r ../data public/data/. #
 docker build -t interactive-phonon-app . # build
-rm -rf public/data # remove files
-ln -s ../../data public/data # re-establish symlinks
+docker run -p 85:8000 interactive-phonon-app
+# test locally http://locahost:85/ 
 ```
+
+
+### Pushing new images to harbor
+
