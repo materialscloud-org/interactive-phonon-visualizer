@@ -4,7 +4,7 @@ import axios from "axios";
 import { VisualizerProps } from "./interfaces";
 import VisualizerPanel from "./VisualizerPanel";
 
-// Move to env variable.
+// currently in the single docker solution this is on the same path.
 const API_ROOT = "";
 
 const PhononsPanel = ({
@@ -67,16 +67,15 @@ const PhononsPanel = ({
           formData.append("matdyn_file", files[2]!);
 
           const res = await axios.post(`${API_ROOT}/convert_phonons`, formData);
-          const resultId = res.data.result_id;
 
           // Update URL
-          const params = new URLSearchParams(window.location.search);
-          params.set("result_id", resultId);
-          window.history.replaceState({}, "", `?${params.toString()}`);
+          // const params = new URLSearchParams(window.location.search);
+          // params.set("result_id", resultId);
+          // window.history.replaceState({}, "", `?${params.toString()}`);
 
           // Load data from server
-          const fetchRes = await axios.get(`${API_ROOT}/results/${resultId}`);
-          data = fetchRes.data;
+          // const fetchRes = await axios.get(`${API_ROOT}/results/${resultId}`);
+          data = res.data
         }
       }
 
