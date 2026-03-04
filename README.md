@@ -18,7 +18,7 @@ This repository contains
 
 - `phonon-web-tools`:
 
-  - Update version, commit and create a tag starting with `py-v`, push to Github.
+  - Update version, commit and create a tag starting with `py-v`, push to Github with the following:
     ```bash
     > cd phonon-web-tools
     > uv version --bump [major|minor|patch]
@@ -29,7 +29,7 @@ This repository contains
   - A Github action will detect the tag `py-vX.Y.Z` and publish to PYPI.
 
 - `mc-react-phonon-visualizer`:
-  - Update version, commit and create a tag starting with `js-v`, push to Github.
+  - Update version, commit and create a tag starting with `js-v`, push to Github with the following:
     ```bash
     > cd mc-react-phonon-visualizer
     > npm version [major|minor|patch]
