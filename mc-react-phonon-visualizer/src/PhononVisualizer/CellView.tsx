@@ -86,6 +86,10 @@ const CellView = ({
     });
 
     weas.clear();
+    // Really bad hack to clear phonons.
+    // Related to issue #112 in weas
+    // https://github.com/superstar54/weas/issues/112
+    weas.clear(weas.tjs.scene.children.at(-1).uuid) 
     weas.avr.fromPhononMode({
       atoms: atoms,
       eigenvectors: props.vectors[q][e],
@@ -103,15 +107,11 @@ const CellView = ({
       [-0.05, 1.05],
     ];
 
-    console.log(weas.avr)
-
     if (isPlaying) weas.avr.play();
     else weas.avr.pause();
 
     weas.avr.frameDuration = 15 / speed;
     weas.avr.modelStyle = 1;
-
-    console.log("w",weas)
 
 
     // use init state to determine whether to update camera.
