@@ -63,9 +63,9 @@ const CellView = ({
         viewerConfig: { backgroundColor: "#0000FF" },
       });
       weasInstance.avr.modelStyle = 1;
-      weasInstance.avr.bondedAtoms = true;
+      // weasInstance.avr.bondedAtoms = true;
       weasInstance.avr.atomScale = atomScale;
-      weasInstance.avr.bondManager.hideLongBonds = false;
+      // weasInstance.avr.bondManager.hideLongBonds = false;
       weasRef.current = weasInstance;
     }
 
@@ -95,16 +95,24 @@ const CellView = ({
       kpoint: props.qpoints[q],
       repeat: [nx, ny, nz],
     });
+    // use a large boundary padding
+    // hanging atoms are better than hanging bonds
     weas.avr.boundary = [
-      [-0.01, 1.01],
-      [-0.01, 1.01],
-      [-0.01, 1.01],
+      [-0.05, 1.05],
+      [-0.05, 1.05],
+      [-0.05, 1.05],
     ];
+
+    console.log(weas.avr)
 
     if (isPlaying) weas.avr.play();
     else weas.avr.pause();
 
     weas.avr.frameDuration = 15 / speed;
+    weas.avr.modelStyle = 1;
+
+    console.log("w",weas)
+
 
     // use init state to determine whether to update camera.
     if (isFirstRender.current) {

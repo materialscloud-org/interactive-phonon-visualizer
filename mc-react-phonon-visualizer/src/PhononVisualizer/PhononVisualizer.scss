@@ -7,3 +7,8 @@
     text-align: center;
   }
 }
+
+// hard code hide the weas phonon controls.
+#animation-controls {
+  display: none !important;
+}

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 
 import { PlotMouseEvent } from "plotly.js";
@@ -26,7 +26,7 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
       const e = props.eigenvalues[q].indexOf(event.points[0].y as number);
       setMode([q, e]);
     },
-    [props]
+    [props],
   );
 
   const bandsProps = {

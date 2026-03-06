@@ -1,6 +1,6 @@
 import PhononVisualizer from "./PhononVisualizer";
 
-import data from "../../data/RhSi2Y2-supercon.json";
+import data from "../../data/graphite.json";
 
 import "./App.scss";
 
