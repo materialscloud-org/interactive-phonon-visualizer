@@ -67,6 +67,7 @@ const CellView = ({
       weasInstance.avr.atomScale = atomScale;
       // weasInstance.avr.bondManager.hideLongBonds = false;
       weasRef.current = weasInstance;
+          window.weas = weasInstance
     }
 
     const weas: WEAS = weasRef.current;
@@ -124,7 +125,7 @@ const CellView = ({
       weas.avr.tjs.controls.update();
     }
 
-    weas.avr.showCell = showCell;
+    weas.avr.cellManager._showCell = showCell;
     weas.avr.VFManager.show = showVectors;
 
     weas.avr.atomScale = atomScale;
