@@ -42,13 +42,13 @@ const ControlsPanel = () => {
     const camera = event.currentTarget.value;
     switch (camera) {
       case "x":
-        setCameraDirection([1, 0, 0]);
+        setCameraDirection("top");
         break;
       case "y":
-        setCameraDirection([0, 1, 0]);
+        setCameraDirection("front");
         break;
       case "z":
-        setCameraDirection([0, 0, 1]);
+        setCameraDirection("right");
         break;
       default:
         break;
@@ -60,7 +60,7 @@ const ControlsPanel = () => {
   };
 
   const handleAmplitudeTextInput = (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
     const textInput = event.currentTarget.querySelector("#amplitudeText");
@@ -72,7 +72,7 @@ const ControlsPanel = () => {
   };
 
   const handleAmplitudeSliderInput = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     if (event.target.value === "" || isNaN(parseFloat(event.target.value))) {
       return;

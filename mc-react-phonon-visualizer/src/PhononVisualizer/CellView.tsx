@@ -1,6 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Card, Button } from "react-bootstrap";
 
+import * as THREE from "three";
 import { Atoms, WEAS } from "weas";
 
 import ParametersContext from "./ParametersContext";
@@ -10,7 +11,7 @@ import "./CellView.scss";
 
 const defaultGuiConfig = {
   controls: {
-    enabled: false,
+    enabled: true,
     atomsControl: false,
     colorControl: false,
     cameraControls: false,
@@ -25,6 +26,48 @@ const defaultGuiConfig = {
     measurement: false,
   },
 };
+
+// function to determine the zoom scale and centering of a set of atoms such that they fit nicely in the pane
+function calculateCenteringAndZoom(
+  nx: number,
+  ny: number,
+  nz: number,
+  lattice: number[][],
+  zoomRatio: number = 15,
+): { center: THREE.Vector3; zoom: number } {
+  // Convert lattice vectors to THREE.Vector3
+  const a = new THREE.Vector3(...lattice[0]).multiplyScalar(nx);
+  const b = new THREE.Vector3(...lattice[1]).multiplyScalar(ny);
+  const c = new THREE.Vector3(...lattice[2]).multiplyScalar(nz);
+
+  // Supercell corners are all combinations of 0/1 scaling of each vector
+  const corners = [
+    new THREE.Vector3(0, 0, 0),
+    a.clone(),
+    b.clone(),
+    c.clone(),
+    a.clone().add(b),
+    a.clone().add(c),
+    b.clone().add(c),
+    a.clone().add(b).add(c),
+  ];
+
+  // Find bounding box
+  const bbox = new THREE.Box3().setFromPoints(corners);
+
+  // Center is the midpoint
+  const center = new THREE.Vector3();
+  bbox.getCenter(center);
+
+  // Zoom factor: take the max length of the box along any axis
+  const size = new THREE.Vector3();
+  bbox.getSize(size);
+  const maxDim = Math.max(size.x, size.y, size.z);
+
+  const zoom = zoomRatio / maxDim;
+
+  return { center, zoom };
+}
 
 const CellView = ({
   props,
@@ -67,7 +110,7 @@ const CellView = ({
       weasInstance.avr.atomScale = atomScale;
       // weasInstance.avr.bondManager.hideLongBonds = false;
       weasRef.current = weasInstance;
-          window.weas = weasInstance
+      window.weas = weasInstance;
     }
 
     const weas: WEAS = weasRef.current;
@@ -75,9 +118,29 @@ const CellView = ({
     let savedCameraPos: any;
     let savedTarget: any;
 
+    // Hide all HTML panels
+    const hud = weas.tjs.hud;
+    // hud.htmlElements.forEach((panel, key) => {
+    //   hud.setHTMLPanelVisible(key, false);
+    // });
+
+    // make the coords smallers
+    const coordBox = hud.miniScenes.get("coord");
+    if (coordBox) {
+      coordBox.width = 100;
+      coordBox.height = 100;
+      coordBox.canvas.width = coordBox.width;
+      coordBox.canvas.height = coordBox.height;
+      coordBox.visible = true;
+    }
+
+    let savedState;
     if (!isFirstRender.current) {
-      savedCameraPos = weas.avr.tjs.camera.position.clone();
-      savedTarget = weas.avr.tjs.controls.target.clone();
+      savedState = weas.tjs.cameraController.exportState();
+    }
+
+    if (savedState) {
+      weas.tjs.cameraController.importState(savedState);
     }
 
     const atoms = new Atoms({
@@ -90,7 +153,9 @@ const CellView = ({
     // Really bad hack to clear phonons.
     // Related to issue #112 in weas
     // https://github.com/superstar54/weas/issues/112
-    weas.clear(weas.tjs.scene.children.at(-1).uuid) 
+    weas.clear(weas.tjs.scene.children.at(-1).uuid);
+
+    // rerender
     weas.avr.fromPhononMode({
       atoms: atoms,
       eigenvectors: props.vectors[q][e],
@@ -114,10 +179,19 @@ const CellView = ({
     weas.avr.frameDuration = 15 / speed;
     weas.avr.modelStyle = 1;
 
-
     // use init state to determine whether to update camera.
+    const { center, zoom } = calculateCenteringAndZoom(
+      nx,
+      ny,
+      nz,
+      props.lattice,
+    );
+
     if (isFirstRender.current) {
-      weas.avr.tjs.updateCameraAndControls({ direction: cameraDirection });
+      weas.avr.tjs.updateCameraAndControls({
+        lookAt: center,
+        zoom: zoom,
+      });
       isFirstRender.current = false;
     } else if (savedCameraPos && savedTarget) {
       weas.avr.tjs.camera.position.copy(savedCameraPos);
@@ -126,6 +200,7 @@ const CellView = ({
     }
 
     weas.avr.cellManager._showCell = showCell;
+    weas.avr.cellManager._showAxes = false;
     weas.avr.VFManager.show = showVectors;
 
     weas.avr.atomScale = atomScale;
@@ -151,23 +226,23 @@ const CellView = ({
   ]);
 
   // Track last applied camera to avoid unnecessary updates
-  const lastCameraDirection = useRef(cameraDirection);
-
   useEffect(() => {
     if (!weasRef.current) return;
+    const weas = weasRef.current;
 
-    const cameraChanged =
-      cameraDirection[0] !== lastCameraDirection.current[0] ||
-      cameraDirection[1] !== lastCameraDirection.current[1] ||
-      cameraDirection[2] !== lastCameraDirection.current[2];
+    const { center, zoom } = calculateCenteringAndZoom(
+      nx,
+      ny,
+      nz,
+      props.lattice,
+    );
 
-    if (cameraChanged) {
-      weasRef.current.avr.tjs.updateCameraAndControls({
-        direction: cameraDirection,
-      });
-      lastCameraDirection.current = cameraDirection;
-    }
-  }, [cameraDirection]);
+    // Move camera to preset view
+    weas.tjs.cameraController.view(cameraDirection);
+    weas.tjs.cameraController.target.set(...center);
+
+    weas.tjs.render();
+  }, [cameraDirection, nx, ny, nz, props.lattice]);
 
   const togglePlay = () => {
     if (weasRef.current) {
@@ -180,6 +255,8 @@ const CellView = ({
       }
     }
   };
+
+  console.log(props);
 
   return (
     <Card>

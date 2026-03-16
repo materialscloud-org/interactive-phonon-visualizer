@@ -1,15 +1,77 @@
-import { memo, useEffect, useState, useMemo } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { Card } from "react-bootstrap";
 
-import Plotly from "plotly.js-basic-dist-min";
+import Plotly, { PlotDatum, PlotMouseEvent } from "plotly.js-basic-dist-min";
 import createPlotlyComponent from "react-plotly.js/factory";
-
 const Plot = createPlotlyComponent(Plotly);
 
-import { PlotDatum, PlotMouseEvent } from "plotly.js-basic-dist-min";
 import { mergePlotlyFormats, mergePlotlyLayout } from "./utils.ts";
-
 import { HighSymPoint, PlotState } from "./types.ts";
+
+const plotMargin = {
+  l: 55,
+  r: 10,
+  b: 25,
+  t: 40,
+};
+
+const HOV_MARKER_STYLE = {
+  size: 6,
+  color: "blue",
+  shadow: "0px 0px 0px 8px rgba(173,216,230,0.5)",
+  borderRadius: "50%",
+};
+
+// Plotly data coordinates -> pixel coords
+function plotlyDataToPixel(pt: PlotDatum, plotDiv: any) {
+  if (!plotDiv?._fullLayout?._size) return null;
+  const full = plotDiv._fullLayout;
+
+  const bbox = plotDiv.getBoundingClientRect();
+  const plotLeft = full.margin.l;
+  const plotTop = full.margin.t;
+  const plotWidth = bbox.width - full.margin.l - full.margin.r;
+  const plotHeight = bbox.height - full.margin.t - full.margin.b;
+
+  const xAxis = pt.xaxis || full.xaxis;
+  const yAxis = pt.yaxis || full.yaxis;
+
+  if (!xAxis?.range || !yAxis?.range) return null;
+
+  // normalise values.
+  const nx = (pt.x - xAxis.range[0]) / (xAxis.range[1] - xAxis.range[0]);
+  const ny = (pt.y - yAxis.range[0]) / (yAxis.range[1] - yAxis.range[0]);
+
+  const px = plotLeft + nx * plotWidth;
+  // add the y margins as an offset again for some reason...
+  const py = plotTop - ny * plotHeight - plotMargin.b - plotMargin.t;
+
+  return { px, py };
+}
+
+// Utility: show/hide marker div
+function showMarkerAt(
+  marker: HTMLDivElement | null,
+  coords: { px: number; py: number } | null,
+) {
+  if (!marker) return;
+  if (!coords) {
+    marker.style.display = "none";
+    return;
+  }
+
+  const { size, color, shadow, borderRadius } = HOV_MARKER_STYLE;
+
+  marker.style.display = "block";
+  marker.style.width = `${size}px`;
+  marker.style.height = `${size}px`;
+  marker.style.borderRadius = borderRadius;
+  marker.style.background = color;
+  marker.style.boxShadow = shadow;
+  marker.style.transform = `translate(${coords.px - size / 2}px, ${
+    coords.py - size / 2
+  }px)`;
+}
 
 const BandsView = ({
   distances,
@@ -30,85 +92,103 @@ const BandsView = ({
   plotlyHoverTraceFormat?: Partial<Plotly.Data>[];
   plotlySelectedTraceFormat?: Partial<Plotly.Data>[];
 }) => {
-  const [hoveredPoint, setHoveredPoint] = useState<PlotDatum | null>(null);
   const [selectedPoint, setSelectedPoint] = useState<PlotDatum | null>(null);
 
-  // memo the bands for performance.
+  const plotRef = useRef<any>(null);
+  const markerRef = useRef<HTMLDivElement>(null);
+
   const bands = useMemo(() => {
     return eigenvalues[0].map((_, colIndex) =>
-      eigenvalues.map((row) => row[colIndex])
+      eigenvalues.map((row) => row[colIndex]),
     );
   }, [eigenvalues]);
 
-  const [plotState, setPlotState] = useState<PlotState>({
-    data: getPlotData(
+  // memo layout between hovers.
+  const layout = useMemo(
+    () =>
+      mergePlotlyLayout(
+        getLayout(highSymPoints, distances, eigenvalues),
+        plotlyLayoutFormat,
+      ),
+    [highSymPoints, distances, eigenvalues, plotlyLayoutFormat],
+  );
+
+  const data = useMemo(
+    () =>
+      getPlotData(
+        bands,
+        distances,
+        null, // hoveredPoint handled separately
+        selectedPoint,
+        plotlyTraceFormat,
+        plotlyHoverTraceFormat,
+        plotlySelectedTraceFormat,
+      ),
+    [
       bands,
       distances,
-      hoveredPoint,
       selectedPoint,
       plotlyTraceFormat,
       plotlyHoverTraceFormat,
-      plotlySelectedTraceFormat
-    ),
-    layout: mergePlotlyLayout(
-      getLayout(highSymPoints, distances, eigenvalues),
-      plotlyLayoutFormat
-    ),
-    frames: [],
-    config: {
+      plotlySelectedTraceFormat,
+    ],
+  );
+
+  const config = useMemo(
+    () => ({
       scrollZoom: false,
       displayModeBar: true,
       displaylogo: false,
       modeBarButtons: [["toImage", "resetScale2d"]],
-    },
-  });
+    }),
+    [],
+  );
 
-  useEffect(() => {
-    setPlotState((oldState) => ({
-      ...oldState,
-      data: getPlotData(
-        bands,
-        distances,
-        hoveredPoint,
-        selectedPoint,
-        plotlyTraceFormat,
-        plotlyHoverTraceFormat,
-        plotlySelectedTraceFormat
-      ),
-      // Important; dont update layout here.
-    }));
-  }, [
-    hoveredPoint,
-    selectedPoint,
-    plotlyTraceFormat,
-    plotlyHoverTraceFormat,
-    plotlySelectedTraceFormat,
-  ]);
-
+  // selection is managed by the plotly selection event below (rebuild the whole plot)
   const handleSelection = (event: PlotMouseEvent) => {
     updateMode(event);
     setSelectedPoint(event.points[0]);
   };
 
+  // hover and unhover controlled by the overlayed div...
+  const handleHover = (event: any) => {
+    const pt = event.points?.[0]; // nearest point...
+    if (!pt || !plotRef.current || !markerRef.current) return;
+    const coords = plotlyDataToPixel(pt, plotRef.current);
+    if (!coords) return;
+    showMarkerAt(markerRef.current, coords);
+  };
+
+  const handleUnhover = () => {
+    showMarkerAt(markerRef.current, null);
+  };
+
   return (
     <Card>
       <Card.Header>Phonon band structure (select phonon)</Card.Header>
-      <Card.Body>
+      <Card.Body style={{ position: "relative", height: "420px" }}>
+        {/* plotly plot. */}
         <Plot
-          data={plotState.data}
-          layout={plotState.layout}
-          config={plotState.config}
+          data={data}
+          layout={layout}
+          config={config}
           onClick={handleSelection}
-          onHover={(event) => {
-            setHoveredPoint(event.points[0]);
+          onHover={handleHover}
+          onUnhover={handleUnhover}
+          onInitialized={(figure, plotDiv) => {
+            plotRef.current = plotDiv;
           }}
-          onUnhover={() => {
-            setHoveredPoint(null);
-          }}
-          useResizeHandler={true}
+          useResizeHandler
+          style={{ width: "100%", height: "100%" }}
+        />
+        {/* render the hover - marker ontop the plotly plot */}
+        <div
+          ref={markerRef}
           style={{
-            width: "100%",
-            height: "100%",
+            position: "absolute",
+            pointerEvents: "none",
+            willChange: "transform",
+            display: "none",
           }}
         />
       </Card.Body>
@@ -123,11 +203,9 @@ const getPlotData = (
   selectedPoint: PlotDatum | null,
   traceFormat?: Partial<Plotly.Data>[],
   hoverFormat?: Partial<Plotly.Data>[],
-  selectedFormat?: Partial<Plotly.Data>[]
+  selectedFormat?: Partial<Plotly.Data>[],
 ) => {
   return bands.map((band, bandIndex) => {
-    const isHovered = (i: number) =>
-      hoveredPoint?.x === distances[i] && hoveredPoint?.y === band[i];
     const isSelected = (i: number) =>
       selectedPoint?.x === distances[i] && selectedPoint?.y === band[i];
 
@@ -136,34 +214,26 @@ const getPlotData = (
       y: band,
       mode: "lines+markers",
       hoverinfo: "none",
-      line: {
-        color: "#1f77b4",
-        width: hoveredPoint?.curveNumber === bandIndex ? 4 : 2,
-      },
+      line: { color: "#1f77b4", width: 2 },
       marker: {
-        size: band.map((_, i) => (isSelected(i) ? 10 : isHovered(i) ? 14 : 0)),
-        color: band.map((_, i) =>
-          isSelected(i) ? "red" : isHovered(i) ? "blue" : "#1f77b4"
-        ),
+        size: band.map((_, i) => (isSelected(i) ? 10 : 0)),
+        color: band.map((_, i) => (isSelected(i) ? "red" : "#1f77b4")),
         line: {
-          width: band.map((_, i) => (isSelected(i) ? 1 : isHovered(i) ? 8 : 0)),
-          color: band.map((_, i) =>
-            isSelected(i) ? "black" : isHovered(i) ? "lightblue" : "transparent"
-          ),
+          width: band.map((_, i) => (isSelected(i) ? 1 : 0)),
+          color: band.map((_, i) => (isSelected(i) ? "black" : "transparent")),
         },
       },
     };
 
-    // Only merge formats if at least one format array is provided
     if (traceFormat || hoverFormat || selectedFormat) {
       return mergePlotlyFormats(
         baseTrace,
         bandIndex,
-        hoveredPoint,
+        null, // null on hoverSettings.
         selectedPoint,
         traceFormat,
         hoverFormat,
-        selectedFormat
+        selectedFormat,
       );
     }
 
@@ -174,7 +244,7 @@ const getPlotData = (
 const getLayout = (
   highSymPoints: HighSymPoint[],
   distances: number[],
-  eigenvalues: number[][]
+  eigenvalues: number[][],
 ): Partial<Plotly.Layout> => ({
   showlegend: false,
   hovermode: "closest",
@@ -206,14 +276,8 @@ const getLayout = (
   })),
   dragmode: "zoom",
   autosize: true,
-  margin: {
-    l: 55,
-    r: 10,
-    b: 25,
-    t: 40,
-  },
+  margin: plotMargin,
 });
 
 const MemoizedBandsView = memo(BandsView);
-
 export default MemoizedBandsView;

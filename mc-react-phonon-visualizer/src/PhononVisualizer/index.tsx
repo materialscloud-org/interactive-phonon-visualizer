@@ -7,7 +7,6 @@ import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 import useParameters from "./useParameters";
 
-import MemoizedBandsViewFast from "./BandsViewFast";
 import MemoizedBandsView from "./BandsView";
 
 import CellView from "./CellView";
@@ -52,7 +51,7 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
           </Col>
           <Col lg="5" className="visualizer-panel">
             {fastMode ? (
-              <MemoizedBandsViewFast {...bandsProps} /> // fastmode
+              <MemoizedBandsView {...bandsProps} /> // fastmode
             ) : (
               <MemoizedBandsView {...bandsProps} /> // default
             )}
