@@ -226,7 +226,7 @@ const CellView = ({
     atomScale,
   ]);
 
-  // Track last applied camera to avoid unnecessary updates
+  // Center and position the camera relative to the scene
   useEffect(() => {
     if (!weasRef.current) return;
     const weas = weasRef.current;
@@ -238,9 +238,15 @@ const CellView = ({
       props.lattice,
     );
 
-    // Move camera to preset view
+    // look down x,y,z
     weas.tjs.cameraController.view(cameraDirection);
-    weas.tjs.cameraController.target.set(...center);
+
+    // center and zoom the camera in the supercell
+    const cam = weas.tjs.cameraController.object;
+    const offset = cam.position.clone().sub(weas.tjs.cameraController.target);
+    cam.position.copy(center.clone().add(offset));
+    weas.tjs.cameraController.target.copy(center);
+    weas.tjs.cameraController.object.zoom = zoom;
 
     weas.tjs.render();
   }, [cameraDirection, nx, ny, nz, props.lattice]);
@@ -256,8 +262,6 @@ const CellView = ({
       }
     }
   };
-
-  console.log(props);
 
   return (
     <Card>
