@@ -11,7 +11,7 @@ import "./CellView.scss";
 
 const defaultGuiConfig = {
   controls: {
-    enabled: true,
+    enabled: false,
     atomsControl: false,
     colorControl: false,
     cameraControls: false,
@@ -104,6 +104,7 @@ const CellView = ({
         domElement: viewerRef.current,
         guiConfig: defaultGuiConfig,
         viewerConfig: { backgroundColor: "#0000FF" },
+        keybindConfig: {},
       });
       weasInstance.avr.modelStyle = 1;
       // weasInstance.avr.bondedAtoms = true;
@@ -120,9 +121,9 @@ const CellView = ({
 
     // Hide all HTML panels
     const hud = weas.tjs.hud;
-    // hud.htmlElements.forEach((panel, key) => {
-    //   hud.setHTMLPanelVisible(key, false);
-    // });
+    hud.htmlElements.forEach((panel, key) => {
+      hud.setHTMLPanelVisible(key, false);
+    });
 
     // make the coords smallers
     const coordBox = hud.miniScenes.get("coord");

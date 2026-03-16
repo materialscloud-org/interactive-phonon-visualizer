@@ -33,7 +33,7 @@
     "react-plotly.js": "^2.6.0",
     "sass": "^1.77.4",
     "three": "^0.183.2",
-    "weas": "file:weas-0.2.10.tgz"
+    "weas": "github:superstar54/weas#materialscloud"
   },
   "peerDependencies": {
     "bootstrap": "^5.3.3",
