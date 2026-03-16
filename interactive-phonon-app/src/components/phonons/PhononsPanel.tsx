@@ -17,7 +17,6 @@ const PhononsPanel = ({
   const [inputFormat, setInputFormat] = useState("Quantum ESPRESSO");
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [errorId, setErrorId] = useState(0);
 
   // Load result from searchParams if present
   useEffect(() => {
@@ -30,10 +29,20 @@ const PhononsPanel = ({
         .catch((err) => {
           console.error("Failed to load result:", err);
           setErrorMessage("⚠️ Error loading phonon calculation from url");
-          setErrorId((prev) => prev + 1); // triggers CSS animation remount
         });
     }
   }, []);
+
+  // remove the error message after some time
+  useEffect(() => {
+    if (!errorMessage) return;
+
+    const timer = setTimeout(() => {
+      setErrorMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [errorMessage]);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -112,14 +121,7 @@ const PhononsPanel = ({
 
   return (
     <>
-      {errorMessage && (
-        <div
-          key={errorId} // ensures remount on repeated errors
-          className="fade-error"
-        >
-          {`⚠️ ${errorMessage}`}
-        </div>
-      )}
+      {errorMessage && <div className="fade-error">{`⚠️ ${errorMessage}`}</div>}
       <Row className="g-4">
         <Col xxl={6}>
           {/* Upload Card */}
