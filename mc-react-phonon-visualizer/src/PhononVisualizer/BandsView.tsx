@@ -92,8 +92,16 @@ const BandsView = ({
   plotlyHoverTraceFormat?: Partial<Plotly.Data>[];
   plotlySelectedTraceFormat?: Partial<Plotly.Data>[];
 }) => {
-  const [selectedPoint, setSelectedPoint] = useState<PlotDatum | null>(null);
-
+  // pick the first point of the first band as default
+  const [selectedPoint, setSelectedPoint] = useState<PlotDatum | null>(() => {
+    if (distances.length === 0 || eigenvalues.length === 0) return null;
+    return {
+      x: distances[0],
+      y: eigenvalues[0][0],
+      curveNumber: 0,
+      pointNumber: 0,
+    };
+  });
   const plotRef = useRef<any>(null);
   const markerRef = useRef<HTMLDivElement>(null);
 
@@ -205,7 +213,7 @@ const getPlotData = (
   hoverFormat?: Partial<Plotly.Data>[],
   selectedFormat?: Partial<Plotly.Data>[],
 ) => {
-  return bands.map((band, bandIndex) => {
+  const traces: Partial<Plotly.Data>[] = bands.map((band, bandIndex) => {
     const isSelected = (i: number) =>
       selectedPoint?.x === distances[i] && selectedPoint?.y === band[i];
 
@@ -216,8 +224,8 @@ const getPlotData = (
       hoverinfo: "none",
       line: { color: "#1f77b4", width: 2 },
       marker: {
-        size: band.map((_, i) => (isSelected(i) ? 10 : 0)),
-        color: band.map((_, i) => (isSelected(i) ? "red" : "#1f77b4")),
+        size: band.map((_, i) => (isSelected(i) ? 14 : 0)),
+        color: band.map((_, i) => (isSelected(i) ? "red" : "transparent")),
         line: {
           width: band.map((_, i) => (isSelected(i) ? 1 : 0)),
           color: band.map((_, i) => (isSelected(i) ? "black" : "transparent")),
@@ -229,7 +237,7 @@ const getPlotData = (
       return mergePlotlyFormats(
         baseTrace,
         bandIndex,
-        null, // null on hoverSettings.
+        null,
         selectedPoint,
         traceFormat,
         hoverFormat,
@@ -239,6 +247,25 @@ const getPlotData = (
 
     return baseTrace;
   });
+
+  if (selectedPoint) {
+    for (let i = 0; i < traces.length; i++) {
+      const t = traces[i];
+      if (
+        t.marker?.size?.some(
+          (s, j) => s > 0 && distances[j] === selectedPoint.x,
+        )
+      ) {
+        // remove from current position
+        const selectedTrace = traces.splice(i, 1)[0];
+        // push to end
+        traces.push(selectedTrace);
+        break;
+      }
+    }
+  }
+
+  return traces;
 };
 
 const getLayout = (
