@@ -53,3 +53,36 @@
     }
   }
 }
+
+.fade-error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+
+  color: rgba(255, 0, 0, 0.95);
+  font-size: 24px;
+  background: rgba(255, 187, 187, 0.5);
+  padding: 4px 8px;
+  border: solid rgba(255, 0, 0, 0.95) 1.5px;
+  border-radius: 4px;
+  display: inline-block;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+
+  /* Fade-out animation */
+  animation: fadeOutInline 3s forwards;
+}
+
+@keyframes fadeOutInline {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

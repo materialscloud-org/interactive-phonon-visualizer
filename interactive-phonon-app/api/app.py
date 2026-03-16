@@ -16,10 +16,11 @@ app.add_middleware(
 )
 
 TWO_MONTHS = 60 * 60 * 24 * 60
+FIVE_GB = 5 * 1024 * 1024 * 1024
 # 2GB disk-backed LRU cache
 cache = Cache(
     "./phonon_cache",
-    size_limit=2 * 1024 * 1024 * 1024  # 2 GB
+    size_limit=FIVE_GB
 )
 
 @app.get("/results/{result_id}")
@@ -43,7 +44,7 @@ async def share_phononvis(
         raise HTTPException(status_code=400, detail=f"Invalid JSON: {str(e)}")
 
     # Use the frontend-supplied hash as the cache key
-    cache.set(key, data, expire=TWO_MONTHS)
+    cache.set(key, data)
     return {"result_id": key}
 
 

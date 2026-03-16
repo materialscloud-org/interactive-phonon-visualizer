@@ -17,7 +17,7 @@
     "bootstrap": "^5.3.3",
     "mc-react-header": "^0.5.0",
     "mc-react-library": "^0.5.0",
-    "mc-react-phonon-visualizer": "^0.6.2",
+    "mc-react-phonon-visualizer": "^0.6.3",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",

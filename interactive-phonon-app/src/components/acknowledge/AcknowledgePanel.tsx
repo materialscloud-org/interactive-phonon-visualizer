@@ -13,7 +13,7 @@ const AcknowledgePanel = () => {
       </p>
       <p>
         You can find a full list of contributors in the{" "}
-        <a href="https://github.com/materialscloud-org/tools-phonon-dispersion">
+        <a href="https://github.com/materialscloud-org/interactive-phonon-visualizer">
           README of the GitHub repository
         </a>
         .

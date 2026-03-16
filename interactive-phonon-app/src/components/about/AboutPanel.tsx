@@ -71,7 +71,7 @@ ATOMIC_SPECIES
             </pre>
           </li>
           <li>
-            <strong>SCF pw.x output file</strong>
+            Quantum ESPRESSO<strong>SCF pw.x</strong> output file (SCF run)
             <p>
               The output file of pw.x is used to get the value of{" "}
               <code>alat</code>, the lattice parameter, as defined by Quantum
