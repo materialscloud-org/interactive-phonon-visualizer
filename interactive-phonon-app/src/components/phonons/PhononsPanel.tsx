@@ -33,7 +33,7 @@ const PhononsPanel = ({
     }
   }, []);
 
-  // remove the error message after some time
+  // remove error message after some time
   useEffect(() => {
     if (!errorMessage) return;
 
@@ -65,7 +65,9 @@ const PhononsPanel = ({
             const file = (
               form.querySelector("#phonon_json_file") as HTMLInputElement
             )?.files?.[0];
-            if (!file) return;
+            if (!file) {
+              throw new Error("Please select a JSON file");
+            }
 
             const text = await file.text();
             data = JSON.parse(text);
@@ -104,7 +106,6 @@ const PhononsPanel = ({
         setErrorMessage(
           "Parsing of input failed. Please check your files or try again.",
         );
-        setErrorId((prev) => prev + 1);
       }
     },
     [inputFormat],

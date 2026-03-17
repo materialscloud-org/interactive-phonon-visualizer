@@ -38,7 +38,7 @@ function App() {
       />
       <div style={{ maxWidth: "1350px", margin: "0 auto" }}>
         <Header
-          title={"Interactive Phonon"}
+          title={"Interactive phonon visualizer"}
           subtitle={
             "A tool for the interactive visualization and inspection of lattice vibrations."
           }
