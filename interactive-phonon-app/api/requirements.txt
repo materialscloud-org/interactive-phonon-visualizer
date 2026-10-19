@@ -1,5 +1,0 @@
-fastapi
-uvicorn[standard]
-python-multipart
-phonon_web_tools
-diskcache

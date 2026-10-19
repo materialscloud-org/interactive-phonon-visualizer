@@ -7,27 +7,9 @@ This repository houses the Materials Cloud interactive phonons visualizer React 
 - clone this repo
 - install `node.js` (includes `npm`) from [official site](https://nodejs.org/)
 - install dependencies with `npm install`
-- install backend dependencies with `pip install -r requirements.txt`
-- launch the backend with `python api/app.py`
 - launch the app with `npm start`
 
-### Build the docker image
-
-```
-docker build -t interactive-phonon-app . # build
-docker run -p 85:8000 interactive-phonon-app
-# test locally http://locahost:85/ 
-```
-
-
-### Pushing new images to harbor
-```
-TAG=$(date +%Y.%m.%d-%H%M%S)
-IMAGE=harbor.materialscloud.cscs.ch/materialscloud/interactive-phonon-visualiser
-
-docker build -t $IMAGE:latest .
-docker push $IMAGE:latest
-docker tag $IMAGE:latest $IMAGE:$TAG
-docker push $IMAGE:$TAG
-
-```
+The app is fully static: Quantum ESPRESSO files are converted in the browser
+with [matsci-parse](https://github.com/Bud-Macaulay/matsci-parse), so no
+backend is needed. `npm run build` writes the site to `dist/`, which can be
+served by any static file host.

@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 
-import ScrollToTopButton from "../common/scroll/ScrollToTopButton";
-
 const AboutPanel = ({ focusSection }: { focusSection: string | null }) => {
   useEffect(() => {
     const section = document.getElementById(focusSection || "");
@@ -71,19 +69,21 @@ ATOMIC_SPECIES
             </pre>
           </li>
           <li>
-            Quantum ESPRESSO<strong>SCF pw.x</strong> output file (SCF run)
+            Quantum ESPRESSO<strong>SCF pw.x</strong> output file (SCF run,
+            optional)
             <p>
-              The output file of pw.x is used to get the value of{" "}
-              <code>alat</code>, the lattice parameter, as defined by Quantum
-              ESPRESSO. Unfortunately, its value cannot always be obtained from
-              the input only (e.g. in the case of <code>ibrav=0</code> it is not
-              explicitly specified), and the way it is obtained depends on the
-              version of Quantum ESPRESSO (in 6.x versions it is the length of
-              the first lattice vector, but it used to be user-defined in
-              earlier versions). This is essential to perform the correct unit
-              conversions, as the q-points are written in units of{" "}
-              <code>2 * pi / alat</code> in the <code>matdyn.modes</code> file
-              (see below).
+              The q-points in the <code>matdyn.modes</code> file (see below) are
+              written in units of <code>2 * pi / alat</code>, where{" "}
+              <code>alat</code> is the lattice parameter as defined by Quantum
+              ESPRESSO. Without the output file, <code>alat</code> is derived
+              from the input exactly as pw.x does since version 5.0 (
+              <code>celldm(1)</code> or <code>A</code> if given, otherwise the
+              length of the first lattice vector). Quantum ESPRESSO 4.x defined
+              it differently for <code>ibrav=0</code> cells given in bohr or
+              angstrom, so for such calculations please provide the output file.
+              When the output file is given, <code>alat</code> is read from it
+              and its cell is checked against the input, to catch files from
+              different calculations.
             </p>
           </li>
           <li>
@@ -165,7 +165,6 @@ ATOMIC_SPECIES
         <h3>Contact Us</h3>
         <p>If you have any questions about these Terms, please contact us.</p>
       </section>
-      <ScrollToTopButton />
     </>
   );
 };

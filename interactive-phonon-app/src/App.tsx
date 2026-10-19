@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Container, Tab, Tabs } from "react-bootstrap";
 
-import AboutPanel from "./components/about/AboutPanel";
-import AcknowledgePanel from "./components/acknowledge/AcknowledgePanel";
+import AboutPanel from "./components/AboutPanel";
+import AcknowledgePanel from "./components/AcknowledgePanel";
 import PhononsPanel from "./components/phonons/PhononsPanel";
 
 import MaterialsCloudHeader from "mc-react-header";

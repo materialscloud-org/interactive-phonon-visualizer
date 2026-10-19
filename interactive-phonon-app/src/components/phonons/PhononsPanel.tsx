@@ -3,9 +3,7 @@ import { Modal, Form, Row, Col, Button, Card } from "react-bootstrap";
 import axios from "axios";
 import { VisualizerProps } from "./interfaces";
 import VisualizerPanel from "./VisualizerPanel";
-
-// currently in the single docker solution this is on the same path.
-const API_ROOT = "";
+import { convertQEPhonon } from "./convert";
 
 const PhononsPanel = ({
   aboutLinkHandler,
@@ -17,21 +15,6 @@ const PhononsPanel = ({
   const [inputFormat, setInputFormat] = useState("Quantum ESPRESSO");
 
   const [errorMessage, setErrorMessage] = useState("");
-
-  // Load result from searchParams if present
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const resultId = params.get("result_id");
-    if (resultId) {
-      axios
-        .get(`${API_ROOT}/results/${resultId}`)
-        .then((res) => setVisualizerProps(res.data))
-        .catch((err) => {
-          console.error("Failed to load result:", err);
-          setErrorMessage("⚠️ Error loading phonon calculation from url");
-        });
-    }
-  }, []);
 
   // remove error message after some time
   useEffect(() => {
@@ -72,7 +55,7 @@ const PhononsPanel = ({
             const text = await file.text();
             data = JSON.parse(text);
           } else {
-            const files = [
+            const [pwInput, pwOutput, matdyn] = [
               "pw_input_file",
               "pw_output_file",
               "matdyn_file",
@@ -80,19 +63,16 @@ const PhononsPanel = ({
               (id) =>
                 (form.querySelector(`#${id}`) as HTMLInputElement)?.files?.[0],
             );
-            if (files.some((f) => !f))
-              throw new Error("All files must be selected");
+            if (!pwInput || !matdyn)
+              throw new Error(
+                "Please select the pw.x input and the matdyn.x modes files",
+              );
 
-            const formData = new FormData();
-            formData.append("pw_input_file", files[0]!);
-            formData.append("pw_output_file", files[1]!);
-            formData.append("matdyn_file", files[2]!);
-
-            const res = await axios.post(
-              `${API_ROOT}/convert_phonons`,
-              formData,
+            data = await convertQEPhonon(
+              await pwInput.text(),
+              await matdyn.text(),
+              await pwOutput?.text(),
             );
-            data = res.data;
           }
         }
 
@@ -100,11 +80,13 @@ const PhononsPanel = ({
           window.history.pushState({}, "", window.location.href); // append to history
           setVisualizerProps(data);
         }
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error("Failed to fetch data:", error);
 
         setErrorMessage(
-          "Parsing of input failed. Please check your files or try again.",
+          error instanceof Error && error.message
+            ? `Parsing of input failed: ${error.message}`
+            : "Parsing of input failed. Please check your files or try again.",
         );
       }
     },
@@ -152,7 +134,8 @@ const PhononsPanel = ({
                     </Form.Group>
                     <Form.Group className="mb-2">
                       <Form.Label>
-                        Quantum ESPRESSO <strong>pw.x</strong> output(SCF run)
+                        Quantum ESPRESSO <strong>pw.x</strong> output (SCF run,
+                        optional)
                       </Form.Label>{" "}
                       <Form.Control type="file" id="pw_output_file" />
                     </Form.Group>
