@@ -8,7 +8,7 @@ This repository contains
 
 - `./phonon-web-tools` - a Python package that allows to convert raw QE phonon data into a web-friendly json file.
 - `./mc-react-phonon-visualizer` - a React component (`PhononVisualizer`) library to visualize the `json` file.
-- `./interactive-phonon-app` (**WIP**) - The Materials Cloud tool that uses the React component and the python tools.
+- `./interactive-phonon-app` (**WIP**) - The Materials Cloud tool that uses the React component. It is a static site: QE files are converted in the browser with `matsci-parse`.
 
 ## Links
 
