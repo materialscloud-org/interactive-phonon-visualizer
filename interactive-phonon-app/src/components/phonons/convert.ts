@@ -2,10 +2,10 @@ import {
   connectBands,
   fromQEPhonon,
   labelHighSymmetryPoints,
-  toPhononVis,
 } from "matsci-parse";
 
-import { VisualizerProps } from "./interfaces";
+import { toVisualizerProps } from "./formats";
+import { VisualizerProps } from "./formats";
 
 /**
  * Convert Quantum ESPRESSO phonon files to visualizer props, in the browser.
@@ -18,10 +18,17 @@ export async function convertQEPhonon(
   matdynModes: string,
   pwOutput?: string,
 ): Promise<VisualizerProps> {
-  const bands = fromQEPhonon({ pwInput, matdynModes, pwOutput, connect: false });
+  const bands = fromQEPhonon({
+    pwInput,
+    matdynModes,
+    pwOutput,
+    connect: false,
+  });
 
   // Labels decide where the path breaks, so name the q-points before
   // connecting bands. If symmetry detection fails, keep the generic labels.
+
+  // TODO: maybe we should just have a singular function in matsci-parse for this...
   let labelled = bands;
   try {
     labelled = await labelHighSymmetryPoints(bands);
@@ -29,6 +36,5 @@ export async function convertQEPhonon(
     console.warn("High-symmetry labelling failed, using generic labels", error);
   }
 
-  const vis = toPhononVis(connectBands(labelled));
-  return { ...vis, title: vis.name } as VisualizerProps;
+  return toVisualizerProps(connectBands(labelled));
 }

@@ -1,0 +1,38 @@
+/* Bootstrap is only here for mc-react-phonon-visualizer, which is built on
+ * react-bootstrap. It sits in its own layer between Tailwind's base and
+ * utilities so that (a) it still styles the visualizer and (b) Tailwind
+ * utilities always win over it in our own markup.
+ */
+@layer theme, base, bootstrap, components, utilities;
+
+@import "tailwindcss";
+@import "bootstrap/dist/css/bootstrap.min.css" layer(bootstrap);
+
+@layer components {
+  /* after the bootstrap layer, so these beat its reboot */
+  body {
+    background-color: aliceblue;
+  }
+
+  .mc-navbrand img {
+    max-height: 50px;
+  }
+
+  a {
+    @apply text-[#337ab7] no-underline hover:text-[#337ac8] hover:underline;
+  }
+
+  p {
+    @apply p-0 mb-2;
+  }
+}
+
+@keyframes fade-out-late {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

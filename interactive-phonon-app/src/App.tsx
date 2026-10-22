@@ -1,30 +1,46 @@
-import { useEffect, useState } from "react";
-import { Container, Tab, Tabs } from "react-bootstrap";
-
-import AboutPanel from "./components/AboutPanel";
-import AcknowledgePanel from "./components/AcknowledgePanel";
-import PhononsPanel from "./components/phonons/PhononsPanel";
+import { useState } from "react";
 
 import MaterialsCloudHeader from "mc-react-header";
+import { McInfoAccordion } from "mc-react-library";
 
-import "./App.scss";
-import { Header } from "./components/header";
+import {
+  OverviewSection,
+  SupportedInputsSection,
+  AcknowledgePanel,
+} from "./components/AccordionContent";
+
+import PhononsPanel from "./components/phonons/PhononsPanel";
+import TermsModal from "./components/TermsModal";
+import VisualizerPanel from "./components/phonons/VisualizerPanel";
+import { VisualizerProps } from "./components/phonons/formats";
+import { SharedSource, syncAddressBar } from "./components/phonons/share";
+
+const ACCORDIONS = [
+  { title: "What the phonon visualizer does", content: <OverviewSection /> },
+  { title: "Supported input files", content: <SupportedInputsSection /> },
+  { title: "Acknowledgements", content: <AcknowledgePanel /> },
+];
 
 function App() {
-  const [currentTab, setCurrentTab] = useState("phonons");
-  const [focusSection, setFocusSection] = useState<string | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<number | null>(null);
+  const [visualizerProps, setVisualizerProps] =
+    useState<VisualizerProps | null>(null);
+  // where the data on screen is shared from, once it has been shared
+  const [source, setSource] = useState<SharedSource | undefined>();
 
-  const showAboutSection = (section: string) => {
-    setCurrentTab("about");
-    setFocusSection(section);
+  const showPhonons = (data: VisualizerProps, from?: SharedSource) => {
+    setVisualizerProps(data);
+    setSource(from);
+    syncAddressBar(from);
   };
 
-  useEffect(() => {
-    currentTab != "about" && setFocusSection(null);
-  }, [currentTab]);
+  const handleShared = (shared: SharedSource) => {
+    setSource(shared);
+    syncAddressBar(shared);
+  };
 
   return (
-    <div style={{ padding: "0px" }}>
+    <>
       <MaterialsCloudHeader
         activeSection={"work"}
         breadcrumbsPath={[
@@ -36,40 +52,45 @@ function App() {
           },
         ]}
       />
-      <div style={{ maxWidth: "1350px", margin: "0 auto" }}>
-        <Header
-          title={"Interactive phonon visualizer"}
-          subtitle={
-            "A tool for the interactive visualization and inspection of lattice vibrations."
-          }
-          doi_ids={[]}
-          logo={"./interactivephonon.png"}
-        />
 
-        <Container
-          fluid="xxl"
-          style={{ padding: "0px 0px 25px 0px", maxWidth: "1350px" }}
-        >
-          <Tabs
-            activeKey={currentTab}
-            onSelect={(key) => {
-              setCurrentTab(key || "phonons");
-              setFocusSection(null);
-            }}
-          >
-            <Tab eventKey="phonons" title="Phonons">
-              <PhononsPanel aboutLinkHandler={showAboutSection} />
-            </Tab>
-            <Tab eventKey="about" title="About">
-              <AboutPanel focusSection={focusSection} />
-            </Tab>
-            <Tab eventKey="acknowledge" title="Acknowledgements">
-              <AcknowledgePanel />
-            </Tab>
-          </Tabs>
-        </Container>
-      </div>
-    </div>
+      <main className="min-h-screen bg-[aliceblue] pb-10">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="overflow-hidden bg-white shadow-sm">
+            <h1 className="m-0 pt-4 text-center text-2xl font-normal tracking-tight text-slate-900 sm:text-3xl">
+              Interactive phonon visualizer
+            </h1>
+
+            <div className="mx-auto max-w-6xl space-y-3 px-6 py-8 sm:px-10">
+              {ACCORDIONS.map(({ title, content }, idx) => (
+                <McInfoAccordion
+                  key={title}
+                  title={title}
+                  open={openAccordion === idx}
+                  onToggle={() =>
+                    setOpenAccordion(openAccordion === idx ? null : idx)
+                  }
+                >
+                  {content}
+                </McInfoAccordion>
+              ))}
+              <PhononsPanel onLoaded={showPhonons} />
+            </div>
+
+            {visualizerProps && (
+              <div className="px-6 pt-4 pb-8">
+                <VisualizerPanel
+                  props={visualizerProps}
+                  source={source}
+                  onShared={handleShared}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      </main>
+
+      <TermsModal />
+    </>
   );
 }
 
