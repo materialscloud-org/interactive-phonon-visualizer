@@ -9,6 +9,8 @@ import { VisualizerProps } from "./types";
 
 import "./CellView.scss";
 
+const REBUILD_DEBOUNCE_MS = 150;
+
 const defaultGuiConfig = {
   controls: {
     enabled: false,
@@ -97,120 +99,134 @@ const CellView = ({
   const isFirstRender = useRef(true);
 
   useEffect(() => {
-    const [q, e] = mode;
-    // Initialize WEAS
-    if (!weasRef.current) {
-      const weasInstance = new WEAS({
-        domElement: viewerRef.current,
-        guiConfig: defaultGuiConfig,
-        viewerConfig: { backgroundColor: "#0000FF" },
-        keybindConfig: {},
+    const rebuild = () => {
+      const [q, e] = mode;
+      // Initialize WEAS
+      if (!weasRef.current) {
+        const weasInstance = new WEAS({
+          domElement: viewerRef.current,
+          guiConfig: defaultGuiConfig,
+          viewerConfig: { backgroundColor: "#0000FF" },
+          keybindConfig: {},
+        });
+        weasInstance.avr.modelStyle = 1;
+        // disable shift-drag box and shift+alt lasso atom selection
+        const selection = weasInstance.selectionManager;
+        selection.dragSelection = selection.startLasso = () => {};
+        selection.helper.enabled = false;
+        // weasInstance.avr.bondedAtoms = true;
+        weasInstance.avr.atomScale = atomScale;
+        // weasInstance.avr.bondManager.hideLongBonds = false;
+        weasRef.current = weasInstance;
+        window.weas = weasInstance;
+      }
+
+      const weas: WEAS = weasRef.current;
+      // Save camera BEFORE clearing/updating
+      let savedCameraPos: any;
+      let savedTarget: any;
+
+      // Hide all HTML panels
+      const hud = weas.tjs.hud;
+      hud.htmlElements.forEach((panel, key) => {
+        hud.setHTMLPanelVisible(key, false);
       });
-      weasInstance.avr.modelStyle = 1;
-      // weasInstance.avr.bondedAtoms = true;
-      weasInstance.avr.atomScale = atomScale;
-      // weasInstance.avr.bondManager.hideLongBonds = false;
-      weasRef.current = weasInstance;
-      window.weas = weasInstance;
-    }
 
-    const weas: WEAS = weasRef.current;
-    // Save camera BEFORE clearing/updating
-    let savedCameraPos: any;
-    let savedTarget: any;
+      // make the coords smallers
+      const coordBox = hud.miniScenes.get("coord");
+      if (coordBox) {
+        coordBox.width = 100;
+        coordBox.height = 100;
+        coordBox.canvas.width = coordBox.width;
+        coordBox.canvas.height = coordBox.height;
+        coordBox.visible = true;
+      }
 
-    // Hide all HTML panels
-    const hud = weas.tjs.hud;
-    hud.htmlElements.forEach((panel, key) => {
-      hud.setHTMLPanelVisible(key, false);
-    });
+      let savedState;
+      if (!isFirstRender.current) {
+        savedState = weas.tjs.cameraController.exportState();
+      }
 
-    // make the coords smallers
-    const coordBox = hud.miniScenes.get("coord");
-    if (coordBox) {
-      coordBox.width = 100;
-      coordBox.height = 100;
-      coordBox.canvas.width = coordBox.width;
-      coordBox.canvas.height = coordBox.height;
-      coordBox.visible = true;
-    }
+      if (savedState) {
+        weas.tjs.cameraController.importState(savedState);
+      }
 
-    let savedState;
-    if (!isFirstRender.current) {
-      savedState = weas.tjs.cameraController.exportState();
-    }
+      const atoms = new Atoms({
+        symbols: props.atom_types,
+        positions: props.atom_pos_car,
+        cell: props.lattice,
+      });
 
-    if (savedState) {
-      weas.tjs.cameraController.importState(savedState);
-    }
+      weas.clear();
+      // Really bad hack to clear phonons.
+      // Related to issue #112 in weas
+      // https://github.com/superstar54/weas/issues/112
+      weas.clear(weas.tjs.scene.children.at(-1).uuid);
 
-    const atoms = new Atoms({
-      symbols: props.atom_types,
-      positions: props.atom_pos_car,
-      cell: props.lattice,
-    });
+      // rerender
+      weas.avr.fromPhononMode({
+        atoms: atoms,
+        eigenvectors: props.vectors[q][e],
+        amplitude: amplitude * 5,
+        factor: vectorLength / (amplitude * 5),
+        nframes: 10 / speed,
+        kpoint: props.qpoints[q],
+        repeat: [nx, ny, nz],
+      });
+      // use a large boundary padding
+      // hanging atoms are better than hanging bonds
+      weas.avr.boundary = [
+        [-0.05, 1.05],
+        [-0.05, 1.05],
+        [-0.05, 1.05],
+      ];
 
-    weas.clear();
-    // Really bad hack to clear phonons.
-    // Related to issue #112 in weas
-    // https://github.com/superstar54/weas/issues/112
-    weas.clear(weas.tjs.scene.children.at(-1).uuid);
+      if (isPlaying) weas.avr.play();
+      else weas.avr.pause();
 
-    // rerender
-    weas.avr.fromPhononMode({
-      atoms: atoms,
-      eigenvectors: props.vectors[q][e],
-      amplitude: amplitude * 5,
-      factor: vectorLength / (amplitude * 5),
-      nframes: 10 / speed,
-      kpoint: props.qpoints[q],
-      repeat: [nx, ny, nz],
-    });
-    // use a large boundary padding
-    // hanging atoms are better than hanging bonds
-    weas.avr.boundary = [
-      [-0.05, 1.05],
-      [-0.05, 1.05],
-      [-0.05, 1.05],
-    ];
+      weas.avr.frameDuration = 15 / speed;
+      weas.avr.modelStyle = 1;
 
-    if (isPlaying) weas.avr.play();
-    else weas.avr.pause();
+      // use init state to determine whether to update camera.
+      const { center, zoom } = calculateCenteringAndZoom(
+        nx,
+        ny,
+        nz,
+        props.lattice,
+      );
 
-    weas.avr.frameDuration = 15 / speed;
-    weas.avr.modelStyle = 1;
+      if (isFirstRender.current) {
+        weas.avr.tjs.updateCameraAndControls({
+          lookAt: center,
+          zoom: zoom,
+        });
+        isFirstRender.current = false;
+      } else if (savedCameraPos && savedTarget) {
+        weas.avr.tjs.camera.position.copy(savedCameraPos);
+        weas.avr.tjs.controls.target.copy(savedTarget);
+        weas.avr.tjs.controls.update();
+      }
 
-    // use init state to determine whether to update camera.
-    const { center, zoom } = calculateCenteringAndZoom(
-      nx,
-      ny,
-      nz,
-      props.lattice,
-    );
+      weas.avr.cellManager._showCell = showCell;
+      weas.avr.cellManager._showAxes = false;
+      weas.avr.VFManager.show = showVectors;
+
+      weas.avr.atomScale = atomScale;
+      // for reasons unknown i have to hook into each entry in _atomScales...
+      for (let i = 0; i < weas.avr._atomScales.length; i++) {
+        weas.avr._atomScales[i] = atomScale;
+      }
+      weas.avr.drawModels();
+      weas.render();
+    };
 
     if (isFirstRender.current) {
-      weas.avr.tjs.updateCameraAndControls({
-        lookAt: center,
-        zoom: zoom,
-      });
-      isFirstRender.current = false;
-    } else if (savedCameraPos && savedTarget) {
-      weas.avr.tjs.camera.position.copy(savedCameraPos);
-      weas.avr.tjs.controls.target.copy(savedTarget);
-      weas.avr.tjs.controls.update();
+      rebuild();
+      return;
     }
-
-    weas.avr.cellManager._showCell = showCell;
-    weas.avr.cellManager._showAxes = false;
-    weas.avr.VFManager.show = showVectors;
-
-    weas.avr.atomScale = atomScale;
-    // for reasons unknown i have to hook into each entry in _atomScales...
-    for (let i = 0; i < weas.avr._atomScales.length; i++) {
-      weas.avr._atomScales[i] = atomScale;
-    }
-    weas.avr.drawModels();
-    weas.render();
+    // debounce so dragging a slider doesn't rebuild the scene on every tick
+    const timer = setTimeout(rebuild, REBUILD_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
   }, [
     amplitude,
     mode,
