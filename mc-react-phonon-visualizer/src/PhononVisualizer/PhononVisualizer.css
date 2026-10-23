@@ -1,0 +1,30 @@
+.pv-layout {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 992px) {
+  .pv-layout {
+    grid-template-columns: 3fr 4fr 5fr;
+  }
+}
+
+@media (min-width: 1400px) {
+  .pv-layout {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.visualizer-panel .pv-card {
+  height: 100%;
+}
+
+.visualizer-panel .pv-card-header {
+  text-align: center;
+}
+
+/* hard code hide the weas phonon controls. */
+#animation-controls {
+  display: none !important;
+}

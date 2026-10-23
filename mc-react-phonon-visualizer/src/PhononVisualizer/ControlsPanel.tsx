@@ -1,9 +1,10 @@
 import { memo, useContext } from "react";
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
 
+import Card from "./Card";
+import { ResetIcon } from "./Icons";
 import ParametersContext from "./ParametersContext";
 
-import "./ControlsPanel.scss";
+import "./ControlsPanel.css";
 
 const ControlsPanel = () => {
   const {
@@ -111,152 +112,137 @@ const ControlsPanel = () => {
   return (
     <Card>
       <Card.Header>Settings</Card.Header>
-      <Card.Body>
-        <Form onSubmit={updateCellRepetitions}>
-          <Form.Group as={Row} className="controls-group">
-            <Form.Label>Repetitions</Form.Label>
-            <Col xs="9" id="cellRepetitions">
-              <Form.Control
-                id="cellRepetitionX"
-                defaultValue={nx}
-                type="number"
-                min="1"
-              />
-              <Form.Control
-                id="cellRepetitionY"
-                defaultValue={ny}
-                type="number"
-                min="1"
-              />
-              <Form.Control
-                id="cellRepetitionZ"
-                defaultValue={nz}
-                type="number"
-                min="1"
-              />
-            </Col>
-            <Col xs="3">
-              <Button type="submit" size="sm">
-                <i className="bi bi-repeat" />
-              </Button>
-            </Col>
-          </Form.Group>
-        </Form>
-        <Form>
-          <Form.Group as={Row} id="cameraControls" className="controls-group">
-            <Col xs="3">
-              <Form.Label>Camera</Form.Label>
-            </Col>
-            <Col>
-              <Button
-                size="sm"
-                variant="secondary"
-                value="x"
-                onClick={updateCamera}
-              >
-                X
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                value="y"
-                onClick={updateCamera}
-              >
-                Y
-              </Button>
-              <Button
-                size="sm"
-                variant="secondary"
-                value="z"
-                onClick={updateCamera}
-              >
-                Z
-              </Button>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="controls-group">
-            <Col xs="3">
-              <Form.Label>Cell</Form.Label>
-            </Col>
-            <Col xs="1">
-              <Form.Check
-                label="On"
-                defaultChecked={showCell}
-                onChange={toggleCell}
-              />
-            </Col>
-          </Form.Group>
-        </Form>
-        <Form id="amplitudeControls" onSubmit={handleAmplitudeTextInput}>
-          <Form.Group as={Row} className="controls-group">
-            <Form.Label>Amplitude</Form.Label>
-            <Col xs="8">
-              <Form.Range
+      <Card.Body style={{ padding: "1rem" }}>
+        <form onSubmit={updateCellRepetitions}>
+          <div className="controls-group">
+            <label className="controls-label">Repetitions</label>
+            <div className="controls-row">
+              <div id="cellRepetitions">
+                <input
+                  id="cellRepetitionX"
+                  className="pv-input"
+                  defaultValue={nx}
+                  type="number"
+                  min="1"
+                />
+                <input
+                  id="cellRepetitionY"
+                  className="pv-input"
+                  defaultValue={ny}
+                  type="number"
+                  min="1"
+                />
+                <input
+                  id="cellRepetitionZ"
+                  className="pv-input"
+                  defaultValue={nz}
+                  type="number"
+                  min="1"
+                />
+              </div>
+              <button type="submit" className="pv-btn">
+                <ResetIcon />
+              </button>
+            </div>
+          </div>
+        </form>
+        <div id="cameraControls" className="controls-group controls-row">
+          <label className="controls-label-inline">Camera</label>
+          {["x", "y", "z"].map((axis) => (
+            <button
+              key={axis}
+              type="button"
+              className="pv-btn pv-btn-secondary"
+              value={axis}
+              onClick={updateCamera}
+            >
+              {axis.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <div className="controls-group controls-row">
+          <label className="controls-label-inline">Cell</label>
+          <label className="pv-check">
+            <input
+              type="checkbox"
+              defaultChecked={showCell}
+              onChange={toggleCell}
+            />
+            On
+          </label>
+        </div>
+        <form id="amplitudeControls" onSubmit={handleAmplitudeTextInput}>
+          <div className="controls-group">
+            <label className="controls-label">Amplitude</label>
+            <div className="controls-row">
+              <input
                 id="amplitudeRange"
+                className="pv-range controls-slider"
+                type="range"
                 min="0.01"
                 max="1"
                 step="0.01"
                 defaultValue={amplitude}
                 onChange={handleAmplitudeSliderInput}
               />
-            </Col>
-            <Col>
-              <Form.Control
+              <input
                 id="amplitudeText"
+                className="pv-input"
                 type="number"
                 min="0.01"
                 max="1"
                 step="0.001"
                 defaultValue={amplitude}
               />
-            </Col>
-          </Form.Group>
-        </Form>
-        <Form>
-          <Form.Group as={Row} className="controls-group">
-            <Form.Label>Vector length</Form.Label>
-            <Col xs="8">
-              <Form.Range
-                min="0.1"
-                max="4"
-                step="0.1"
-                defaultValue={vectorLength}
-                onChange={updateVectors}
-              />
-            </Col>
-            <Col>
-              <Form.Check
-                label="On"
+            </div>
+          </div>
+        </form>
+        <div className="controls-group">
+          <label className="controls-label">Vector length</label>
+          <div className="controls-row">
+            <input
+              className="pv-range controls-slider"
+              type="range"
+              min="0.1"
+              max="4"
+              step="0.1"
+              defaultValue={vectorLength}
+              onChange={updateVectors}
+            />
+            <label className="pv-check">
+              <input
+                type="checkbox"
                 defaultChecked={showVectors}
                 onChange={toggleVectors}
               />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="controls-group">
-            <Form.Label>Speed</Form.Label>
-            <Col xs="8">
-              <Form.Range
-                min="0.1"
-                max="1"
-                step="0.01"
-                defaultValue={speed}
-                onChange={updateSpeed}
-              />
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} className="controls-group">
-            <Form.Label>Atom scale</Form.Label>
-            <Col xs="8">
-              <Form.Range
-                min="0.01"
-                max="2"
-                step="0.01"
-                defaultValue={atomScale}
-                onChange={updateAtomScale}
-              />
-            </Col>
-          </Form.Group>
-        </Form>
+              On
+            </label>
+          </div>
+        </div>
+        <div className="controls-group">
+          <label className="controls-label">Speed</label>
+          <input
+            className="pv-range controls-slider"
+            type="range"
+            min="0.1"
+            max="1"
+            step="0.01"
+            defaultValue={speed}
+            onChange={updateSpeed}
+          />
+        </div>
+        <div className="controls-group">
+          <label className="controls-label">Atom scale</label>
+          <input
+            className="pv-range controls-slider"
+            type="range"
+            min="0.01"
+            max="2"
+            step="0.01"
+            defaultValue={atomScale}
+            onChange={updateAtomScale}
+          />
+        </div>
       </Card.Body>
     </Card>
   );

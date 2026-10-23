@@ -1,13 +1,14 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { Card, Button } from "react-bootstrap";
 
 import * as THREE from "three";
 import { Atoms, WEAS } from "weas";
 
+import Card from "./Card";
+import { PauseIcon, PlayIcon } from "./Icons";
 import ParametersContext from "./ParametersContext";
 import { VisualizerProps } from "./types";
 
-import "./CellView.scss";
+import "./CellView.css";
 
 const REBUILD_DEBOUNCE_MS = 150;
 
@@ -282,7 +283,7 @@ const CellView = ({
   return (
     <Card>
       <Card.Header>Drag to rotate, scroll to zoom</Card.Header>
-      <Card.Body className="p-0">
+      <Card.Body className="pv-flush">
         <InteractionGuard>
           <div
             className="weas-container"
@@ -290,29 +291,33 @@ const CellView = ({
             style={{ width: "100%", height: "450px" }}
           ></div>
         </InteractionGuard>
-        <Button className="play-button" size="sm" onClick={togglePlay}>
-          {isPlaying ? (
-            <i className="bi bi-pause-fill"></i>
-          ) : (
-            <i className="bi bi-play-fill"></i>
-          )}
-        </Button>
+        <button
+          type="button"
+          className="pv-btn play-button"
+          onClick={togglePlay}
+        >
+          {isPlaying ? <PauseIcon /> : <PlayIcon />}
+        </button>
       </Card.Body>
     </Card>
   );
 };
 
+// Wheel events go to the page until the view is clicked, so scrolling past
+// the viewer doesn't zoom it. Dragging to rotate always works.
 const InteractionGuard = ({ children }: { children: React.ReactNode }) => {
   const [isInteractive, setIsInteractive] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  let mouseNoteClass = "mouse-interact-note";
-  if (isInteractive) {
-    mouseNoteClass += " off";
-  }
-
-  let guardClassName = "";
-  if (!isInteractive) guardClassName += " disable-mouse";
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || isInteractive) return;
+    // capture phase, so weas never sees the event; the page still scrolls
+    const blockWheel = (event: WheelEvent) => event.stopPropagation();
+    wrapper.addEventListener("wheel", blockWheel, { capture: true });
+    return () =>
+      wrapper.removeEventListener("wheel", blockWheel, { capture: true });
+  }, [isInteractive]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -330,11 +335,11 @@ const InteractionGuard = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <div ref={wrapperRef} onClick={() => setIsInteractive(true)}>
-      <div className={guardClassName}>{children}</div>
-      <div className={mouseNoteClass} onClick={() => setIsInteractive(true)}>
-        Click to interact
-      </div>
+    <div ref={wrapperRef} onPointerDown={() => setIsInteractive(true)}>
+      {children}
+      {!isInteractive && (
+        <div className="mouse-interact-note">Click to enable zoom</div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import { useCallback, useState, useEffect } from "react";
-import { Col, Container, Row } from "react-bootstrap";
 
 import { PlotMouseEvent } from "plotly.js";
 
@@ -12,7 +11,7 @@ import MemoizedBandsView from "./BandsView";
 import CellView from "./CellView";
 import MemoizedControlsPanel from "./ControlsPanel";
 
-import "./PhononVisualizer.scss";
+import "./PhononVisualizer.css";
 
 const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
   const parameters = useParameters(props.repetitions);
@@ -41,23 +40,21 @@ const PhononVisualizer = ({ props }: { props: VisualizerProps }) => {
 
   return (
     <ParametersContext.Provider value={parameters}>
-      <Container fluid>
-        <Row className="mb-xxl-4 g-2">
-          <Col lg="3" className="visualizer-panel">
-            <MemoizedControlsPanel />
-          </Col>
-          <Col lg="4" className="visualizer-panel">
-            <CellView props={props} mode={mode} />
-          </Col>
-          <Col lg="5" className="visualizer-panel">
-            {fastMode ? (
-              <MemoizedBandsView {...bandsProps} /> // fastmode
-            ) : (
-              <MemoizedBandsView {...bandsProps} /> // default
-            )}
-          </Col>
-        </Row>
-      </Container>
+      <div className="pv-layout">
+        <div className="visualizer-panel">
+          <MemoizedControlsPanel />
+        </div>
+        <div className="visualizer-panel">
+          <CellView props={props} mode={mode} />
+        </div>
+        <div className="visualizer-panel">
+          {fastMode ? (
+            <MemoizedBandsView {...bandsProps} /> // fastmode
+          ) : (
+            <MemoizedBandsView {...bandsProps} /> // default
+          )}
+        </div>
+      </div>
     </ParametersContext.Provider>
   );
 };

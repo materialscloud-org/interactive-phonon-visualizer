@@ -2,7 +2,7 @@ import PhononVisualizer from "./PhononVisualizer";
 
 import data from "../../data/graphite.json";
 
-import "./App.scss";
+import "./App.css";
 
 function App() {
   return (

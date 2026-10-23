@@ -14,8 +14,7 @@
     "./package.json": "./package.json"
   },
   "sideEffects": [
-    "**/*.css",
-    "**/*.scss"
+    "**/*.css"
   ],
   "files": [
     "dist"
@@ -30,15 +29,11 @@
     "lodash": "^4.17.21",
     "plotly.js-basic-dist-min": "^4.1.2",
     "react-plotly.js": "^4.1.0",
-    "sass": "^1.77.4",
-    "three": "^0.186.1",
+    "three": "^0.169.0",
     "weas": "github:superstar54/weas#materialscloud"
   },
   "peerDependencies": {
-    "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
     "react": "^18.3.1",
-    "react-bootstrap": "^2.10.2",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {

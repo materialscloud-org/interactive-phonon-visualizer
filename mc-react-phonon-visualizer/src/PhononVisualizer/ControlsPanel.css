@@ -1,0 +1,29 @@
+.controls-group {
+  margin-bottom: 1rem;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.controls-label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.controls-slider {
+  flex: 0 0 66%;
+  width: 66%;
+}
+
+#cellRepetitions {
+  display: flex;
+  flex: 1;
+  gap: 0.2em;
+}
+
+#cameraControls button {
+  width: 40px;
+}

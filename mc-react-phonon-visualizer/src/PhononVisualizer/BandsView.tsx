@@ -1,10 +1,10 @@
 import { memo, useMemo, useRef, useState } from "react";
-import { Card } from "react-bootstrap";
 
 import Plotly, { PlotDatum, PlotMouseEvent } from "plotly.js-basic-dist-min";
 import createPlotlyComponent from "react-plotly.js/factory";
 const Plot = createPlotlyComponent(Plotly);
 
+import Card from "./Card";
 import { mergePlotlyFormats, mergePlotlyLayout } from "./utils.ts";
 import { HighSymPoint, PlotState } from "./types.ts";
 
@@ -174,31 +174,33 @@ const BandsView = ({
   return (
     <Card>
       <Card.Header>Phonon band structure (select phonon)</Card.Header>
-      <Card.Body style={{ position: "relative", height: "420px" }}>
-        {/* plotly plot. */}
-        <Plot
-          data={data}
-          layout={layout}
-          config={config}
-          onClick={handleSelection}
-          onHover={handleHover}
-          onUnhover={handleUnhover}
-          onInitialized={(figure, plotDiv) => {
-            plotRef.current = plotDiv;
-          }}
-          useResizeHandler
-          style={{ width: "100%", height: "100%" }}
-        />
-        {/* render the hover - marker ontop the plotly plot */}
-        <div
-          ref={markerRef}
-          style={{
-            position: "absolute",
-            pointerEvents: "none",
-            willChange: "transform",
-            display: "none",
-          }}
-        />
+      <Card.Body style={{ padding: "1rem" }}>
+        <div style={{ position: "relative", height: "420px" }}>
+          {/* plotly plot. */}
+          <Plot
+            data={data}
+            layout={layout}
+            config={config}
+            onClick={handleSelection}
+            onHover={handleHover}
+            onUnhover={handleUnhover}
+            onInitialized={(figure, plotDiv) => {
+              plotRef.current = plotDiv;
+            }}
+            useResizeHandler
+            style={{ width: "100%", height: "100%" }}
+          />
+          {/* render the hover - marker ontop the plotly plot */}
+          <div
+            ref={markerRef}
+            style={{
+              position: "absolute",
+              pointerEvents: "none",
+              willChange: "transform",
+              display: "none",
+            }}
+          />
+        </div>
       </Card.Body>
     </Card>
   );

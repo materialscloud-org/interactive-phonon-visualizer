@@ -1,0 +1,141 @@
+/* Bootstrap-like card, buttons and inputs without depending on bootstrap. */
+.pv-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background-color: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.175);
+  border-radius: 0.375rem;
+}
+
+.pv-card-header {
+  padding: 0.5rem 1rem;
+  background-color: rgba(33, 37, 41, 0.03);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.175);
+  border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.pv-card-body {
+  flex: 1 1 auto;
+}
+
+.pv-btn {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #fff;
+  background-color: #0d6efd;
+  border: 1px solid #0d6efd;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.pv-btn:hover {
+  filter: brightness(90%);
+}
+
+.pv-btn.pv-btn-secondary {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.pv-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0.375rem 0.75rem;
+  font: inherit;
+  color: #212529;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+}
+
+.pv-input:focus {
+  outline: 0;
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.pv-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.pv-check input {
+  accent-color: #0d6efd;
+}
+
+/* matches bootstrap's .form-range; the per-browser rules below read these */
+.pv-range {
+  --track-height: 0.5rem;
+  --track-bg: #dee2e6;
+  --thumb-size: 1rem;
+  --thumb-bg: #0d6efd;
+  --thumb-ring: none;
+  width: 100%;
+  height: 1.5rem;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+}
+
+.pv-range:focus {
+  outline: 0;
+}
+
+.pv-range:active {
+  --thumb-bg: #b6d4fe;
+}
+
+.pv-range:focus-visible {
+  --thumb-ring: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Track and thumb need one rule per browser: a selector list containing an
+   unknown pseudo-element is dropped entirely. */
+.pv-range::-webkit-slider-runnable-track {
+  height: var(--track-height);
+  background: var(--track-bg);
+  border-radius: 1rem;
+}
+
+.pv-range::-moz-range-track {
+  height: var(--track-height);
+  background: var(--track-bg);
+  border-radius: 1rem;
+}
+
+.pv-range::-webkit-slider-thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  /* webkit doesn't centre the thumb on the track */
+  margin-top: calc((var(--track-height) - var(--thumb-size)) / 2);
+  background: var(--thumb-bg);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--thumb-ring);
+  appearance: none;
+  transition:
+    background-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
+
+.pv-range::-moz-range-thumb {
+  width: var(--thumb-size);
+  height: var(--thumb-size);
+  background: var(--thumb-bg);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--thumb-ring);
+  transition:
+    background-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
+}
