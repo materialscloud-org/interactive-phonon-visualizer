@@ -1,4 +1,4 @@
-import { defineConfig, searchForWorkspaceRoot } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -12,11 +12,6 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    // matsci-parse is linked from ../matsci-parse; allow serving its files
-    // (e.g. the moyo .wasm) in dev.
-    fs: {
-      allow: [searchForWorkspaceRoot(process.cwd()), "../matsci-parse"],
-    },
   },
   base: "/",
 });

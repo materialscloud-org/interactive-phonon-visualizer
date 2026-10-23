@@ -3,18 +3,24 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { libInjectCss } from "vite-plugin-lib-inject-css";
 
-import * as packageJson from "./package.json";
+import packageJson from "./package.json" with { type: "json" };
+
+// peer deps and their subpaths (e.g. react/jsx-runtime) stay external
+const external = Object.keys(packageJson.peerDependencies).map(
+  (name) => new RegExp(`^${name}(/|$)`),
+);
 
 export default defineConfig({
   plugins: [react(), libInjectCss()],
   build: {
     lib: {
-      entry: path.resolve(__dirname, "src/PhononVisualizer/index.tsx"),
+      entry: path.resolve(
+        import.meta.dirname,
+        "src/PhononVisualizer/index.tsx",
+      ),
       fileName: "main",
       formats: ["es"],
     },
-    rollupOptions: {
-      external: [...Object.keys(packageJson.peerDependencies)],
-    },
+    rolldownOptions: { external },
   },
 });

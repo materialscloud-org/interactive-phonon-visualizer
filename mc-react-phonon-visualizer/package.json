@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "oxlint --react-plugin",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -41,14 +41,10 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-plotly.js": "^2.6.3",
-    "@typescript-eslint/eslint-plugin": "^7.13.1",
-    "@typescript-eslint/parser": "^7.13.1",
-    "@vitejs/plugin-react-swc": "^3.5.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.7",
+    "@vitejs/plugin-react-swc": "^4.3.3",
+    "oxlint": "^1.89.0",
     "typescript": "^5.2.2",
-    "vite": "^5.3.1",
-    "vite-plugin-lib-inject-css": "^2.1.1"
+    "vite": "^8.3.5",
+    "vite-plugin-lib-inject-css": "^2.2.2"
   }
 }
