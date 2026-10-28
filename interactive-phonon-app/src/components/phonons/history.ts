@@ -43,7 +43,7 @@ export function addToHistory(
   const now = new Date();
   const entry: HistoryEntry = {
     id: crypto.randomUUID(),
-    fileName: entryName(phonons),
+    fileName: source?.tag || entryName(phonons),
     format,
     date: now.toISOString(),
     phonons,

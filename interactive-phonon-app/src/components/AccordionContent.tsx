@@ -1,4 +1,8 @@
-export const OverviewSection = () => (
+import { useState } from "react";
+
+import { McInfoAccordion } from "mc-react-library";
+
+const OverviewSection = () => (
   <div>
     <p>
       This tool allows to visualize the phonon dispersion calculated with an
@@ -23,7 +27,7 @@ export const OverviewSection = () => (
   </div>
 );
 
-export const SupportedInputsSection = () => (
+const SupportedInputsSection = () => (
   <div>
     <p className="text-center">
       The Materials Cloud interactive phonon visualizer supports the following
@@ -92,7 +96,7 @@ C  0.66666666666666  0.33333333333333  0.00000000000000`}</code>
   </div>
 );
 
-export const AcknowledgePanel = () => {
+const AcknowledgePanel = () => {
   return (
     <div>
       <p>
@@ -134,3 +138,24 @@ export const AcknowledgePanel = () => {
     </div>
   );
 };
+
+const ACCORDIONS = [
+  { title: "What the phonon visualizer does", content: <OverviewSection /> },
+  { title: "Supported input files", content: <SupportedInputsSection /> },
+  { title: "Acknowledgements", content: <AcknowledgePanel /> },
+];
+
+/** The information accordions at the top of the page, one open at a time. */
+export default function InfoAccordions() {
+  const [open, setOpen] = useState<number | null>(null);
+  return ACCORDIONS.map(({ title, content }, i) => (
+    <McInfoAccordion
+      key={title}
+      title={title}
+      open={open === i}
+      onToggle={() => setOpen(open === i ? null : i)}
+    >
+      {content}
+    </McInfoAccordion>
+  ));
+}

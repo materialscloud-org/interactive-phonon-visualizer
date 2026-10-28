@@ -22,11 +22,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "oxlint --react-plugin",
+    "lint": "oxlint",
     "preview": "vite preview"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
+    "lodash.merge": "^4.6.2",
     "plotly.js-basic-dist-min": "^4.1.2",
     "react-plotly.js": "^4.1.0",
     "three": "^0.169.0",
@@ -37,6 +37,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@types/lodash.merge": "^4.6.9",
     "@types/node": "^22.8.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",

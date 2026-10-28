@@ -1,13 +1,9 @@
 import { useState } from "react";
 
 import MaterialsCloudHeader from "mc-react-header";
-import { McInfoAccordion } from "mc-react-library";
+import { McAppHeader } from "mc-react-library";
 
-import {
-  OverviewSection,
-  SupportedInputsSection,
-  AcknowledgePanel,
-} from "./components/AccordionContent";
+import InfoAccordions from "./components/AccordionContent";
 
 import PhononsPanel from "./components/phonons/PhononsPanel";
 import TermsModal from "./components/TermsModal";
@@ -15,14 +11,7 @@ import VisualizerPanel from "./components/phonons/VisualizerPanel";
 import { VisualizerProps } from "./components/phonons/formats";
 import { SharedSource, syncAddressBar } from "./components/phonons/share";
 
-const ACCORDIONS = [
-  { title: "What the phonon visualizer does", content: <OverviewSection /> },
-  { title: "Supported input files", content: <SupportedInputsSection /> },
-  { title: "Acknowledgements", content: <AcknowledgePanel /> },
-];
-
 function App() {
-  const [openAccordion, setOpenAccordion] = useState<number | null>(null);
   const [visualizerProps, setVisualizerProps] =
     useState<VisualizerProps | null>(null);
   // where the data on screen is shared from, once it has been shared
@@ -53,31 +42,26 @@ function App() {
         ]}
       />
 
+      {/* p-[1rem] etc. rather than p-4: Bootstrap's own p-4/px-4/py-4 are
+          !important and would win. */}
       <main className="min-h-screen bg-[aliceblue] pb-10">
-        <div className="mx-auto max-w-7xl px-4">
-          <div className="overflow-hidden bg-white shadow-sm">
-            <h1 className="m-0 pt-4 text-center text-2xl font-normal tracking-tight text-slate-900 sm:text-3xl">
-              Interactive phonon visualizer
-            </h1>
+        <div className="mx-auto max-w-7xl px-[1rem]">
+          <div className="overflow-hidden bg-white p-[1rem] shadow-sm">
+            <McAppHeader
+              title="Interactive phonon visualizer"
+              logo={`${import.meta.env.BASE_URL}interactivephonon.png`}
+              logoAlt="Interactive phonon visualizer logo"
+            />
 
-            <div className="mx-auto max-w-6xl space-y-3 px-6 py-8 sm:px-10">
-              {ACCORDIONS.map(({ title, content }, idx) => (
-                <McInfoAccordion
-                  key={title}
-                  title={title}
-                  open={openAccordion === idx}
-                  onToggle={() =>
-                    setOpenAccordion(openAccordion === idx ? null : idx)
-                  }
-                >
-                  {content}
-                </McInfoAccordion>
-              ))}
-              <PhononsPanel onLoaded={showPhonons} />
+            <div className="mx-auto max-w-4xl px-6 py-8 sm:px-10">
+              <div className="space-y-3">
+                <InfoAccordions />
+                <PhononsPanel onLoaded={showPhonons} />
+              </div>
             </div>
 
             {visualizerProps && (
-              <div className="px-6 pt-4 pb-8">
+              <div className="mx-auto max-w-6xl px-6 py-[1rem] sm:px-10">
                 <VisualizerPanel
                   props={visualizerProps}
                   source={source}

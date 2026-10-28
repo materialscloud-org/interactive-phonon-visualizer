@@ -9,6 +9,3 @@ export const selectClass =
 
 export const fileInputClass =
   "block w-full cursor-pointer rounded border border-slate-300 text-sm text-slate-600 file:mr-3 file:cursor-pointer file:border-0 file:border-r file:border-slate-300 file:bg-slate-50 file:px-3 file:py-2 file:text-sm file:text-slate-700 hover:file:bg-slate-100";
-
-export const secondaryButtonClass =
-  "inline-flex items-center gap-1.5 rounded border border-blue-200 bg-white px-4 py-2 text-sm font-medium text-blue-700 shadow-sm transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";

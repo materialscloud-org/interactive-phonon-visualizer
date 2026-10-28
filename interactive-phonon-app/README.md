@@ -15,23 +15,15 @@ The app is static: Quantum ESPRESSO files are converted in the browser with
 is the **share store**, the key-value store that holds data shared with the
 Share button.
 
-### Share store
+### Share links
 
-`VITE_SHARE_STORE` selects the share store at dev/build time (see
-`src/shareStore.ts`):
+The Share button (mc-react-library's `McShareButton`) uploads the data on
+screen to the Materials Cloud kv-store and gives a `?<id>` link; links expire
+after 30 days. The store is `VITE_KV_URL` (`src/shareStore.ts`):
+`.env.development` points `npm run dev` at the dev store, and builds use the
+production store (`npm run build:dev` builds against the dev store). Links
+only resolve against the store they were made in.
 
-| `VITE_SHARE_STORE` | Store                                     |
-| ------------------ | ----------------------------------------- |
-| `dev` (default)    | `https://kv-store.dev.materialscloud.org` |
-| `production`       | `https://kv-store.materialscloud.org`     |
-
-| Script                | Share store |
-| --------------------- | ----------- |
-| `npm run dev`         | dev         |
-| `npm run dev:be-prod` | production  |
-| `npm run build:dev`   | dev         |
-| `npm run build:prod`  | production  |
-
-Share links (`?<id>`) only resolve against the store they were created in,
-so links made on a dev deployment do not open on production. Data loaded
-from other backends uses `?fromURL=<url>[&format=<fmt>]`.
+Data from other backends opens with
+`?fromURL=<url>[&format=<fmt>][&tag=<name>]`, where `tag` names it in the
+history; sharing it uploads a copy to the kv-store.

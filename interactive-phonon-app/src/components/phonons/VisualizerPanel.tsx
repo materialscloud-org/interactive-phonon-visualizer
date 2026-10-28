@@ -1,19 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { VisualizerProps } from "./formats";
 
 import PhononVisualizer from "mc-react-phonon-visualizer";
+import { McShareButton } from "mc-react-library";
 
-import { buttonClass, secondaryButtonClass } from "../styles";
+import { buttonClass } from "../styles";
 import { serializePhonons } from "./formats";
-import { SharedSource, shareLinkFor, uploadPhonons } from "./share";
-import { SHARE_STORE_NAME, SHARE_STORE_URL } from "../../shareStore";
-
-type ShareState =
-  | { status: "idle" }
-  | { status: "uploading" }
-  | { status: "done"; link: string; copied: boolean }
-  | { status: "error"; message: string };
+import { SharedSource, kvShareId, kvSource } from "./share";
+import { KV_URL } from "../../shareStore";
 
 const VisualizerPanel = ({
   props,
@@ -25,39 +20,6 @@ const VisualizerPanel = ({
   onShared: (source: SharedSource) => void;
 }) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [share, setShare] = useState<ShareState>({ status: "idle" });
-
-  useEffect(() => setShare({ status: "idle" }), [props]);
-
-  const copyLink = async (link: string) => {
-    try {
-      await navigator.clipboard.writeText(link);
-      return true;
-    } catch {
-      return false; // e.g. no clipboard access; the link is still shown
-    }
-  };
-
-  // Data opened from a link (our kv-store or another backend) is shared by
-  // that same link rather than uploaded again.
-  const handleShare = async () => {
-    if (!props) return;
-    setShare({ status: "uploading" });
-    try {
-      let shared = source;
-      if (!shared) {
-        shared = await uploadPhonons(props);
-        onShared(shared);
-      }
-      const link = shareLinkFor(shared);
-      setShare({ status: "done", link, copied: await copyLink(link) });
-    } catch (error) {
-      setShare({
-        status: "error",
-        message: `Sharing failed: ${error instanceof Error ? error.message : error}`,
-      });
-    }
-  };
 
   // results render below the inputs, so bring them into view on load
   useEffect(() => {
@@ -73,78 +35,44 @@ const VisualizerPanel = ({
       )}
       {props && <PhononVisualizer props={props} />}
 
-      <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
-        <button
-          type="button"
-          className={secondaryButtonClass}
-          onClick={handleShare}
-          disabled={share.status === "uploading"}
-        >
-          <i className="bi bi-share" />{" "}
-          {share.status === "uploading" ? "Sharing…" : "Share"}
-        </button>
-        {/* Download JSON button */}
-        <button
-          type="button"
-          className={buttonClass}
-          onClick={() => {
-            if (!props) return;
-            const blob = new Blob([serializePhonons(props)], {
-              type: "application/json",
-            });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `interactive_phonon_vis.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-
-            URL.revokeObjectURL(url);
-          }}
-        >
-          <i className="bi bi-download" /> Download JSON
-        </button>
-      </div>
-
-      {share.status === "error" && (
-        <p className="mt-2 mb-0 text-right text-sm text-red-600">
-          {share.message}
-        </p>
-      )}
-      {share.status === "done" && (
-        <div className="mt-3 ml-auto max-w-2xl rounded border border-slate-200 bg-slate-50 p-3 text-sm">
-          <div className="flex gap-2">
-            <input
-              readOnly
-              value={share.link}
-              onFocus={(e) => e.target.select()}
-              aria-label="Share link"
-              className="min-w-0 flex-1 rounded border border-slate-300 bg-white px-2 py-1 font-mono text-xs text-slate-700"
-            />
+      {/* Data opened from one of our share links is shared by that link;
+          anything else (files, ?fromURL=) is uploaded to the kv-store. */}
+      <McShareButton
+        data={props}
+        kvUrl={KV_URL}
+        shareId={kvShareId(source)}
+        onShared={(id: string) => onShared(kvSource(id))}
+      >
+        {({ button, error, result }: Record<string, React.ReactNode>) => (
+          <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+            {error}
+            {result}
+            {button}
             <button
               type="button"
-              className={secondaryButtonClass}
-              onClick={async () =>
-                setShare({
-                  ...share,
-                  copied: await copyLink(share.link),
-                })
-              }
+              className={buttonClass}
+              onClick={() => {
+                if (!props) return;
+                const blob = new Blob([serializePhonons(props)], {
+                  type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `interactive_phonon_vis.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                URL.revokeObjectURL(url);
+              }}
             >
-              <i className="bi bi-clipboard" /> Copy
+              <i className="bi bi-download" /> Download JSON
             </button>
           </div>
-          <p className="mt-2 mb-0 text-xs text-slate-500">
-            {share.copied && "Link copied to clipboard. "}
-            Anyone with this link can view the data. It is stored on{" "}
-            {new URL(SHARE_STORE_URL).host}
-            {SHARE_STORE_NAME === "dev" && " (development store)"} and expires
-            after 30 days.
-          </p>
-        </div>
-      )}
+        )}
+      </McShareButton>
     </div>
   );
 };

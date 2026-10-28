@@ -1,28 +1,27 @@
-import { SHARE_STORE_URL } from "../../shareStore";
-import {
-  DEFAULT_FORMAT,
-  normaliseFormat,
-  readPhonons,
-  serializePhonons,
-} from "./formats";
+import { KV_URL } from "../../shareStore";
+import { DEFAULT_FORMAT, normaliseFormat, readPhonons } from "./formats";
 import { VisualizerProps } from "./formats";
 
 // Link formats that load shared data:
 //   ?<id>                          short form for our own kv-store, i.e.
-//                                  {SHARE_STORE_URL}/api/shares/<id> (PhononVis)
-//   ?fromURL=<url>[&format=<fmt>]  any backend serving JSON; same parameters
+//                                  {KV_URL}/api/shares/<id> (PhononVis)
+//   ?fromURL=<url>[&format=<fmt>][&tag=<name>]
+//                                  any backend serving JSON; same parameters
 //                                  as seekpath-web's RemoteStructureLoader.
-//                                  `fmt` is accepted as an alias of `format`;
-//                                  the default format is PhononVis.
+//                                  The default format is PhononVis; `tag`
+//                                  names the data in the history.
 const FROM_URL_PARAM = "fromURL";
-const FORMAT_PARAMS = ["format", "fmt"];
-const KV_SHARES_PREFIX = `${SHARE_STORE_URL}/api/shares/`;
+const FORMAT_PARAM = "format";
+const TAG_PARAM = "tag";
+const KV_SHARES_PREFIX = `${KV_URL}/api/shares/`;
 const SHORT_ID = /^[A-Za-z0-9_-]+$/;
 
 /** Where shared data lives, and the format it is stored in. */
 export interface SharedSource {
   url: string;
   format: string;
+  /** Name for the data, from `?tag=` (only for ?fromURL= links). */
+  tag?: string;
 }
 
 // A short id is a bare query key without a value: `?2c00ce92`.
@@ -34,15 +33,18 @@ export function getSharedSource(): SharedSource | null {
   const params = new URLSearchParams(window.location.search);
   const fromURL = params.get(FROM_URL_PARAM);
   if (fromURL) {
-    const format = FORMAT_PARAMS.map((p) => params.get(p)).find(Boolean);
-    return { url: fromURL, format: normaliseFormat(format) };
+    return {
+      url: fromURL,
+      format: normaliseFormat(params.get(FORMAT_PARAM)),
+      tag: params.get(TAG_PARAM) || undefined,
+    };
   }
   const id = shortIdFrom(params);
   return id ? { url: KV_SHARES_PREFIX + id, format: DEFAULT_FORMAT } : null;
 }
 
 /** App link that loads `source`. */
-export function shareLinkFor({ url, format }: SharedSource): string {
+export function shareLinkFor({ url, format, tag }: SharedSource): string {
   const base = window.location.origin + window.location.pathname;
   const id = url.startsWith(KV_SHARES_PREFIX)
     ? url.slice(KV_SHARES_PREFIX.length)
@@ -51,7 +53,8 @@ export function shareLinkFor({ url, format }: SharedSource): string {
     return `${base}?${id}`;
   }
   const params = new URLSearchParams({ [FROM_URL_PARAM]: url });
-  if (format !== DEFAULT_FORMAT) params.set(FORMAT_PARAMS[0], format);
+  if (format !== DEFAULT_FORMAT) params.set(FORMAT_PARAM, format);
+  if (tag) params.set(TAG_PARAM, tag);
   return `${base}?${params}`;
 }
 
@@ -66,26 +69,21 @@ export function syncAddressBar(source?: SharedSource) {
   window.history.replaceState(null, "", link + window.location.hash);
 }
 
-/** Upload the phonon data (as PhononVis) to the kv-store. */
-export async function uploadPhonons(
-  data: VisualizerProps,
-): Promise<SharedSource> {
-  const body = serializePhonons(data);
+/** Source of data shared to our kv-store as `id` (see McShareButton). */
+export const kvSource = (id: string): SharedSource => ({
+  url: KV_SHARES_PREFIX + id,
+  format: DEFAULT_FORMAT,
+});
 
-  const res = await fetch(`${SHARE_STORE_URL}/api/shares`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body,
-  });
-  if (res.status === 413) {
-    throw new Error(
-      "this dataset is too large to share; use Download JSON instead",
-    );
-  }
-  if (!res.ok) throw new Error(`share service returned ${res.status}`);
-
-  const { id } = await res.json();
-  return { url: KV_SHARES_PREFIX + id, format: DEFAULT_FORMAT };
+/**
+ * kv-store id of a source, if it is one of our own share links. Sharing
+ * data from anywhere else (e.g. ?fromURL=) uploads a copy instead.
+ */
+export function kvShareId(source?: SharedSource): string | undefined {
+  if (!source || source.format !== DEFAULT_FORMAT) return undefined;
+  if (!source.url.startsWith(KV_SHARES_PREFIX)) return undefined;
+  const id = source.url.slice(KV_SHARES_PREFIX.length);
+  return SHORT_ID.test(id) ? id : undefined;
 }
 
 /** Fetch shared data and convert it to PhononVis. */
