@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { McHistoryList } from "mc-react-library";
+import { McHistoryList, McloudSpinner } from "mc-react-library";
 import { VisualizerProps } from "./formats";
 import { convertQEPhonon } from "./convert";
 import {
@@ -239,9 +239,10 @@ const PhononsPanel = ({
         </Card>
       </div>
       {loadingShared && (
-        <p className="m-0 text-center text-sm text-slate-500">
+        <div className="flex items-center justify-center gap-2 text-sm text-slate-500">
+          <McloudSpinner className="w-6 shrink-0" />
           Loading shared data…
-        </p>
+        </div>
       )}
       <McHistoryList
         title="Previously loaded phonons"

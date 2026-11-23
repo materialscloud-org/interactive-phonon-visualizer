@@ -14,19 +14,21 @@ import { SharedSource, syncAddressBar } from "./components/phonons/share";
 function App() {
   const [visualizerProps, setVisualizerProps] =
     useState<VisualizerProps | null>(null);
+  // Current policy is no mc-keyvalues-stores allowed in apps
   // where the data on screen is shared from, once it has been shared
-  const [source, setSource] = useState<SharedSource | undefined>();
+  // const [source, setSource] = useState<SharedSource | undefined>();
 
   const showPhonons = (data: VisualizerProps, from?: SharedSource) => {
     setVisualizerProps(data);
-    setSource(from);
+    // setSource(from); (Current policy is no mc-keyvalues-stores allowed in apps)
     syncAddressBar(from);
   };
 
-  const handleShared = (shared: SharedSource) => {
-    setSource(shared);
-    syncAddressBar(shared);
-  };
+  // Current policy is no mc-keyvalues-stores allowed in apps
+  // const handleShared = (shared: SharedSource) => {
+  //   setSource(shared);
+  //   syncAddressBar(shared);
+  // };
 
   return (
     <>
@@ -53,7 +55,7 @@ function App() {
               logoAlt="Interactive phonon visualizer logo"
             />
 
-            <div className="mx-auto max-w-4xl px-6 py-8 sm:px-10">
+            <div className="mx-auto max-w-6xl px-6 py-8 sm:px-10">
               <div className="space-y-3">
                 <InfoAccordions />
                 <PhononsPanel onLoaded={showPhonons} />
@@ -62,11 +64,8 @@ function App() {
 
             {visualizerProps && (
               <div className="mx-auto max-w-6xl px-6 py-[1rem] sm:px-10">
-                <VisualizerPanel
-                  props={visualizerProps}
-                  source={source}
-                  onShared={handleShared}
-                />
+                {/* Current policy is no mc-keyvalues-stores allowed in apps: no source / onShared */}
+                <VisualizerPanel props={visualizerProps} />
               </div>
             )}
           </div>

@@ -1,5 +1,5 @@
 import { KV_STORE_URL } from "mc-react-library";
 
-// kv-store for share links. .env.development points `npm run dev` at the dev
-// store; unset (production builds) means the Materials Cloud production store.
-export const KV_URL: string = import.meta.env.VITE_KV_URL || KV_STORE_URL;
+// The kv-store that ?<id> share links point to (the production store; the
+// app no longer makes them: no key-value stores in apps)
+export const KV_URL: string = KV_STORE_URL;
